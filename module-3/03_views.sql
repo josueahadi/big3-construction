@@ -1,87 +1,54 @@
 -- =========================================================
 -- MODULE 3: VIEWS (The "Simple & Secure" Reports)
 -- Client Request:
--- "Our managers want a simple way to see project progress
--- and total worker costs without accessing raw tables directly."
+-- "Create safe, simple views for supervisors and the accounting team."
 -- =========================================================
 
 
 -- =========================================================
--- PART 3A: Guided Activity - Creating a Basic View
+-- PART 3A: Guided Activity - Supervisor Project View
 -- =========================================================
--- Task: Create a view that shows each project’s name, site city,
--- manager name, and start date for quick dashboard access.
+-- Create a secure view that shows project assignments
+-- without exposing salaries or client contact information.
 
-CREATE OR REPLACE VIEW vw_project_summary AS
-SELECT 
-    p.project_id,
+CREATE VIEW v_project_worker_assignments AS
+SELECT
     p.project_name,
-    p.site_city,
-    CONCAT(m.first_name, ' ', m.last_name) AS manager_name,
-    p.start_date
+    p.site_address,
+    w.first_name,
+    w.last_name,
+    w.phone,
+    pa.assignment_date
 FROM projects p
-JOIN managers m ON p.manager_id = m.manager_id;
+JOIN project_assignments pa ON p.project_id = pa.project_id
+JOIN workers w ON pa.worker_id = w.worker_id
+ORDER BY p.project_name, w.last_name;
 
--- Test the view
-SELECT * FROM vw_project_summary;
+
+-- Example usage for supervisors:
+SELECT * 
+FROM v_project_worker_assignments
+WHERE project_name = 'Downtown Plaza';
 
 
 -- =========================================================
--- PART 3B: Guided Activity - Aggregation View
+-- PART 3B: Challenge Task - Financial Summary View
 -- =========================================================
--- Task: Create a view that shows each project’s total number
--- of assigned workers and the total estimated labor cost.
+-- Create a summarized financial report view for the accounting team.
 
-CREATE OR REPLACE VIEW vw_project_costs AS
-SELECT 
-    p.project_id,
+CREATE VIEW v_project_financial_summary AS
+SELECT
     p.project_name,
-    COUNT(a.worker_id) AS total_workers,
-    SUM(w.hourly_rate * a.hours_worked) AS total_labor_cost
+    c.client_name,
+    p.project_budget,
+    COALESCE(SUM(pm.total_cost), 0) AS total_materials_cost,
+    (p.project_budget - COALESCE(SUM(pm.total_cost), 0)) AS remaining_budget
 FROM projects p
-JOIN assignments a ON p.project_id = a.project_id
-JOIN workers w ON a.worker_id = w.worker_id
-GROUP BY p.project_id, p.project_name;
+JOIN clients c ON p.client_id = c.client_id
+LEFT JOIN project_materials pm ON p.project_id = pm.project_id
+GROUP BY p.project_name, c.client_name, p.project_budget;
 
--- Test the view
-SELECT * FROM vw_project_costs;
-
-
--- =========================================================
--- PART 3C: Challenge Task - Secure Manager Dashboard View
--- =========================================================
--- Client Request:
--- "Managers should be able to view their own projects with
--- total workers and costs, but without seeing other managers’ data."
-
--- Solution: Create a secure, parameterized manager view
-
-CREATE OR REPLACE VIEW vw_manager_dashboard AS
-SELECT 
-    m.manager_id,
-    CONCAT(m.first_name, ' ', m.last_name) AS manager_name,
-    p.project_id,
-    p.project_name,
-    p.site_city,
-    p.start_date,
-    COUNT(a.worker_id) AS total_workers,
-    SUM(w.hourly_rate * a.hours_worked) AS total_cost
-FROM managers m
-JOIN projects p ON m.manager_id = p.manager_id
-JOIN assignments a ON p.project_id = a.project_id
-JOIN workers w ON a.worker_id = w.worker_id
-GROUP BY 
-    m.manager_id, manager_name, 
-    p.project_id, p.project_name, p.site_city, p.start_date;
-
--- Test the secure view for one manager (example: manager_id = 1)
-SELECT * FROM vw_manager_dashboard WHERE manager_id = 1;
-
-
--- =========================================================
--- PART 3D: Optional - Limit View Access
--- =========================================================
--- Restrict direct table access and grant view access to managers only.
-
-REVOKE SELECT ON projects, assignments, workers FROM manager;
-GRANT SELECT ON vw_manager_dashboard TO manager;
+-- Example usage for accounting:
+SELECT * 
+FROM v_project_financial_summary
+ORDER BY remaining_budget DESC;
