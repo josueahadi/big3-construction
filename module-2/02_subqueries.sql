@@ -37,22 +37,22 @@ WHERE s.skill_name = 'Heavy Equipment Operation';
 -- Client Request: "Find the project(s) with the highest number of assigned workers."
 -- We'll use a subquery to first count workers per project, then find the max.
 
-SELECT 
+SELECT
     p.project_name,
     worker_count
 FROM (
-    SELECT 
-        a.project_id,
-        COUNT(a.worker_id) AS worker_count
-    FROM assignments a
-    GROUP BY a.project_id
+    SELECT
+        pa.project_id,
+        COUNT(pa.worker_id) AS worker_count
+    FROM project_assignments pa
+    GROUP BY pa.project_id
 ) AS project_counts
 JOIN projects p ON project_counts.project_id = p.project_id
 WHERE worker_count = (
     SELECT MAX(worker_count)
     FROM (
         SELECT COUNT(worker_id) AS worker_count
-        FROM assignments
+        FROM project_assignments
         GROUP BY project_id
     ) AS counts
 );

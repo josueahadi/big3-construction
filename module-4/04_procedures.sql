@@ -68,7 +68,7 @@ DELIMITER $$
 
 CREATE PROCEDURE sp_assign_worker_to_project(
     IN p_worker_id INT,
-    IN p_project_id INT,
+    IN p_project_id VARCHAR(10),
     OUT p_message VARCHAR(255)
 )
 BEGIN
@@ -93,5 +93,5 @@ DELIMITER ;
 
 -- Test Procedure
 SET @message = '';
-CALL sp_assign_worker_to_project(2, 3, @message);
+CALL sp_assign_worker_to_project(2, 'P001', @message);
 SELECT @message;

@@ -229,3 +229,92 @@ If you have questions about appropriate AI usage for specific situations, consul
 
 
 Good luck, consultants!
+
+---
+
+## Challenge Justifications
+
+### Module 1 Challenge: Composite Index Design
+
+**Decision:** Created a composite index `idx_projects_city_date` on `projects(site_city, start_date)`.
+
+**Justification:**
+The column order matters significantly in composite indexes due to how MySQL uses indexes from left to right. We chose to place `site_city` first and `start_date` second for the following reasons:
+
+1. **Filter First, Then Sort:** The query pattern `WHERE site_city = 'X' ORDER BY start_date` first filters records by city (reducing the result set), then sorts the remaining records. MySQL can use the index efficiently for both operations when columns are ordered this way.
+
+2. **Selectivity:** The `site_city` column acts as the primary filter, narrowing down the dataset significantly. Once we have all projects in a specific city, the index can efficiently retrieve them in `start_date` order without additional sorting.
+
+3. **Left-Prefix Rule:** MySQL can use this composite index even for queries that only filter by `site_city` (without sorting by date). However, if we reversed the order, queries filtering only by city would not benefit from the index.
+
+This design optimizes the most common query pattern while maintaining flexibility for simpler queries that only filter by city.
+
+---
+
+### Module 5 Challenge: Testing the Safety Certification Trigger
+
+**Testing Approach:**
+
+To verify that the `trg_check_safety_cert_before_assignment` trigger correctly enforces the Basic Safety certification requirement, we performed the following tests:
+
+1. **Test Case 1 - Expired Certification (Should Fail):**
+   - Selected a worker with an existing Basic Safety certification
+   - Updated the certification's `expiry_date` to a past date (e.g., `2023-01-01`)
+   - Attempted to insert a new project assignment for that worker
+   - **Expected Result:** INSERT operation rejected with error message: "Error: Worker safety certification is expired or missing."
+   - **Actual Result:** Trigger successfully prevented the insertion and returned the error message
+
+2. **Test Case 2 - Missing Certification (Should Fail):**
+   - Selected a worker with no Basic Safety certification record
+   - Attempted to insert a project assignment for that worker
+   - **Expected Result:** INSERT operation rejected with the same error message
+   - **Actual Result:** Trigger successfully prevented the insertion
+
+3. **Test Case 3 - Valid Certification (Should Succeed):**
+   - Updated the worker's Basic Safety certification to a future date (e.g., `2026-12-31`)
+   - Attempted to insert the project assignment again
+   - **Expected Result:** INSERT operation succeeds
+   - **Actual Result:** Worker was successfully assigned to the project
+
+**Conclusion:** The trigger works as intended, maintaining data integrity by preventing unsafe project assignments while allowing valid ones to proceed.
+
+---
+
+### Module 6 Challenge: Testing Strategy for the Archival Event
+
+**Testing Strategy:**
+
+Since the archival event `ev_archive_old_projects` is scheduled to run monthly, waiting for the actual execution would be impractical during development. We employed the following testing strategies:
+
+1. **Manual Execution of Event Logic:**
+   - Temporarily disabled the event: `ALTER EVENT ev_archive_old_projects DISABLE;`
+   - Manually executed the transaction logic (the INSERT and DELETE statements) to verify the archival process works correctly
+   - Verified results by counting records in both `projects` and `archived_projects` tables
+   - Re-enabled the event after testing
+
+2. **Accelerated Schedule Testing:**
+   - Temporarily changed the event schedule to run every 1 minute for immediate testing:
+     ```sql
+     ALTER EVENT ev_archive_old_projects ON SCHEDULE EVERY 1 MINUTE;
+     ```
+   - Monitored the event execution and verified that old projects were correctly archived
+   - Reset the schedule back to monthly after confirming functionality
+
+3. **Test Data Preparation:**
+   - Created test projects with `end_date` values older than 5 years
+   - Ran the event logic to confirm these projects were moved to `archived_projects`
+   - Verified that recent projects (completed within 5 years) were not affected
+
+4. **Event Status Verification:**
+   - Used `SHOW EVENTS;` to confirm the event was created and enabled
+   - Checked MySQL's event scheduler logs for execution history and any errors
+
+**Recommended Production Testing:** Before deploying to production, we would run the event with a test schedule (e.g., `EVERY 1 DAY`) for a monitoring period to ensure no unintended data loss occurs.
+
+---
+
+## Team Contribution Statement
+
+***
+
+---

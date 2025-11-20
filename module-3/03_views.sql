@@ -40,13 +40,13 @@ CREATE VIEW v_project_financial_summary AS
 SELECT
     p.project_name,
     c.client_name,
-    p.project_budget,
+    p.budget AS project_budget,
     COALESCE(SUM(pm.total_cost), 0) AS total_materials_cost,
-    (p.project_budget - COALESCE(SUM(pm.total_cost), 0)) AS remaining_budget
+    (p.budget - COALESCE(SUM(pm.total_cost), 0)) AS remaining_budget
 FROM projects p
 JOIN clients c ON p.client_id = c.client_id
 LEFT JOIN project_materials pm ON p.project_id = pm.project_id
-GROUP BY p.project_name, c.client_name, p.project_budget;
+GROUP BY p.project_name, c.client_name, p.budget;
 
 -- Example usage for accounting:
 SELECT * 
