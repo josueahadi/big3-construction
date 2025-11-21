@@ -42,7 +42,7 @@ SELECT COUNT(*) AS total_projects FROM projects;
 SELECT COUNT(*) AS total_workers FROM workers;
 ```
 
-If any counts are 0, you need to run your Phase 1 data population scripts first.
+If any counts are 0, you need to run the data population scripts first.
 
 ---
 
