@@ -14,6 +14,7 @@ const projectRoutes = require('./routes/project.routes');
 const workerRoutes = require('./routes/worker.routes');
 const clientRoutes = require('./routes/client.routes');
 const materialRoutes = require('./routes/material.routes');
+const supplierRoutes = require('./routes/supplier.routes');
 
 // Import configurations
 require('./config/passport')(passport);
@@ -82,6 +83,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/workers', workerRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/materials', materialRoutes);
+app.use('/api/suppliers', supplierRoutes);
 
 // =========================================================
 // Error Handling
