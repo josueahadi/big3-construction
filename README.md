@@ -103,6 +103,30 @@ erDiagram
     suppliers ||--o{ project_materials : "supplies"
 ```
 
+## Database Setup
+
+**IMPORTANT:** Before working on any modules or running the backend API, you must set up the database by running the migration files in this exact order:
+
+```bash
+# 1. Create database and base tables (Phase 1)
+mysql -u root -p < migrations/01_setup_database.sql
+
+# 2. Insert sample data for Phase 1 tables
+mysql -u root -p big3_construction < migrations/02_insert_data.sql
+
+# 3. Add backend-specific tables and columns (Phase 2+)
+mysql -u root -p big3_construction < migrations/07_migrations.sql
+
+# 4. Seed user accounts for authentication
+mysql -u root -p big3_construction < migrations/08_seed_users.sql
+```
+
+**What each migration does:**
+- **01_setup_database.sql** - Creates the `big3_construction` database and all Phase 1 tables (projects, workers, clients, materials, suppliers, etc.)
+- **02_insert_data.sql** - Populates tables with sample data for development and testing
+- **07_migrations.sql** - Adds backend-specific tables (`users`, `user_activity_log`) and columns (latitude/longitude for projects)
+- **08_seed_users.sql** - Creates 5 test user accounts (1 Admin, 2 PMs, 2 Site Supervisors) with bcrypt-hashed passwords
+
 ## Project Setup & Delivery
 
 This assignment builds directly on your "Phase 1" implementation. You will use the `big3_construction` database you built and populated according to the standard schema provided above.
@@ -114,7 +138,7 @@ This assignment builds directly on your "Phase 1" implementation. You will use t
   3. Install the extension by Matt Bierner
   4. Open this README.md and press `Ctrl+Shift+V` (or `Cmd+Shift+V` on Mac) to open the Markdown preview
   5. The Entity-Relationship Diagram will now render visually
-  
+
   *Note: The diagram also renders automatically when you view this README on GitHub.com*
 - **Tools:** We recommend DataGrip as its database management features are excellent for this task. You can manage your scripts, run queries, and easily inspect your database objects (like views, procedures, and triggers) from the UI. However, you may use any tool you are comfortable with (MySQL Workbench, DBeaver, etc.).
 - **Collaboration:** This is a pair programming assignment. We highly recommend you work on the logic for the "Challenge" sections together, either in person or over a screen share.
