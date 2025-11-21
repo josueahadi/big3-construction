@@ -12,6 +12,7 @@ const { notFound, errorHandler, handleDatabaseError } = require('./middleware/er
 const authRoutes = require('./routes/auth.routes');
 const projectRoutes = require('./routes/project.routes');
 const workerRoutes = require('./routes/worker.routes');
+const clientRoutes = require('./routes/client.routes');
 
 // Import configurations
 require('./config/passport')(passport);
@@ -78,6 +79,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/workers', workerRoutes);
+app.use('/api/clients', clientRoutes);
 
 // =========================================================
 // Error Handling
