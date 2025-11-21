@@ -86,13 +86,26 @@ Full-stack backend application for Big3 Construction Company, built with Node.js
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed:
+### System Requirements
+
+Ensure you have the following installed:
 
 - **Node.js** >= 18.0.0
 - **npm** >= 9.0.0
 - **MySQL** >= 8.0
 - **RabbitMQ** >= 3.12 (or Docker)
 - **Git**
+
+### Database Prerequisites
+
+**IMPORTANT:** Before running the backend, you must first complete the Phase 1 database setup from the repository root:
+
+1. Run migrations **01** and **02** to create the base database structure and sample data
+2. Then run migrations **07** and **08** to add backend-specific tables
+
+See the [root README.md](../README.md#database-setup) for detailed migration instructions.
+
+If you haven't run these migrations yet, the backend will fail to start with database connection errors.
 
 ---
 
@@ -110,14 +123,27 @@ npm install
 ```
 
 ### 3. Set Up Database
-```bash
-# Run the Phase 1 database setup if not already done
-mysql -u root -p big3_construction < ../00_setup_database.sql
-mysql -u root -p big3_construction < ../00_insert_sample_data.sql
 
-# Run Phase 2 migrations
-mysql -u root -p big3_construction < ../migrations/07_migrations.sql
-mysql -u root -p big3_construction < ../migrations/08_seed_users.sql
+**If you haven't already run the Phase 1 migrations:**
+```bash
+# From the repository root directory
+cd ..
+
+# Run all 4 migrations in order
+mysql -u root -p < migrations/01_setup_database.sql
+mysql -u root -p big3_construction < migrations/02_insert_data.sql
+mysql -u root -p big3_construction < migrations/07_migrations.sql
+mysql -u root -p big3_construction < migrations/08_seed_users.sql
+
+# Return to backend directory
+cd backend
+```
+
+**If you've already run migrations 01 and 02:**
+```bash
+# From the repository root, just run the backend-specific migrations
+mysql -u root -p big3_construction < migrations/07_migrations.sql
+mysql -u root -p big3_construction < migrations/08_seed_users.sql
 ```
 
 ### 4. Set Up RabbitMQ
