@@ -47,7 +47,7 @@ class MaterialController {
       if (isNaN(materialId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid material ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid material ID'
         });
       }
 
@@ -61,7 +61,7 @@ class MaterialController {
       if (error.message === 'MATERIAL_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Material not found'
+          error: req.t ? req.t('materials.not_found') : 'Material not found'
         });
       }
       next(error);
@@ -89,38 +89,38 @@ class MaterialController {
 
       res.status(201).json({
         success: true,
-        message: 'Material created successfully',
+        message: req.t ? req.t('materials.created') : 'Material created successfully',
         data: material
       });
     } catch (error) {
       if (error.message === 'MATERIAL_NAME_REQUIRED') {
         return res.status(400).json({
           success: false,
-          error: 'Material name is required'
+          error: req.t ? req.t('materials.name_required') : 'Material name is required'
         });
       }
       if (error.message === 'UNIT_COST_REQUIRED') {
         return res.status(400).json({
           success: false,
-          error: 'Unit cost is required'
+          error: req.t ? req.t('materials.unit_cost_required') : 'Unit cost is required'
         });
       }
       if (error.message === 'MATERIAL_NAME_TOO_LONG') {
         return res.status(400).json({
           success: false,
-          error: 'Material name must not exceed 100 characters'
+          error: req.t ? req.t('materials.name_too_long') : 'Material name must not exceed 100 characters'
         });
       }
       if (error.message === 'INVALID_UNIT_COST') {
         return res.status(400).json({
           success: false,
-          error: 'Unit cost must be a positive number'
+          error: req.t ? req.t('materials.invalid_unit_cost') : 'Unit cost must be a positive number'
         });
       }
       if (error.message === 'UNIT_COST_TOO_HIGH') {
         return res.status(400).json({
           success: false,
-          error: 'Unit cost exceeds maximum allowed value'
+          error: req.t ? req.t('materials.unit_cost_too_high') : 'Unit cost exceeds maximum allowed value'
         });
       }
       next(error);
@@ -139,7 +139,7 @@ class MaterialController {
       if (isNaN(materialId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid material ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid material ID'
         });
       }
 
@@ -157,14 +157,14 @@ class MaterialController {
 
       res.json({
         success: true,
-        message: 'Material updated successfully',
+        message: req.t ? req.t('materials.updated') : 'Material updated successfully',
         data: material
       });
     } catch (error) {
       if (error.message === 'MATERIAL_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Material not found'
+          error: req.t ? req.t('materials.not_found') : 'Material not found'
         });
       }
       if (error.message === 'MATERIAL_NAME_REQUIRED') {
@@ -207,7 +207,7 @@ class MaterialController {
       if (isNaN(materialId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid material ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid material ID'
         });
       }
 
@@ -215,13 +215,13 @@ class MaterialController {
 
       res.json({
         success: true,
-        message: 'Material deleted successfully'
+        message: req.t ? req.t('materials.deleted') : 'Material deleted successfully'
       });
     } catch (error) {
       if (error.message === 'MATERIAL_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Material not found'
+          error: req.t ? req.t('materials.not_found') : 'Material not found'
         });
       }
       next(error);
