@@ -127,6 +127,14 @@ mysql -u root -p big3_construction < migrations/08_seed_users.sql
 - **07_migrations.sql** - Adds backend-specific tables (`users`, `user_activity_log`) and columns (latitude/longitude for projects)
 - **08_seed_users.sql** - Creates 5 test user accounts (1 Admin, 2 PMs, 2 Site Supervisors) with bcrypt-hashed passwords
 
+## Backend API Setup
+
+This project includes a Node.js/Express backend API for managing the Big3 Construction database with RESTful endpoints, authentication, geospatial search, and multilingual support.
+
+**Setup Instructions:** See [backend/README.md](backend/README.md) for complete backend installation, configuration, and API documentation.
+
+**⚠️ Important:** All backend setup and npm package installations must be done from within the `backend/` directory. Always `cd backend` before running `npm install` or any npm commands.
+
 ## Project Setup & Delivery
 
 This assignment builds directly on your "Phase 1" implementation. You will use the `big3_construction` database you built and populated according to the standard schema provided above.
