@@ -213,7 +213,7 @@ npm run cert-checker
 npm run consumer
 ```
 
-The API will be available at: `http://localhost:5000`
+The API will be available at: `http://localhost:5001`
 
 ---
 
@@ -221,7 +221,7 @@ The API will be available at: `http://localhost:5000`
 
 ### Base URL
 ```
-http://localhost:5000/api/v1
+http://localhost:5001/api
 ```
 
 ### Authentication Endpoints
