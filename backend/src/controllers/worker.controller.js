@@ -47,7 +47,7 @@ class WorkerController {
       if (isNaN(workerId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid worker ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid worker ID'
         });
       }
 
@@ -61,7 +61,7 @@ class WorkerController {
       if (error.message === 'WORKER_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Worker not found'
+          error: req.t ? req.t('workers.not_found') : 'Worker not found'
         });
       }
       next(error);
@@ -89,32 +89,32 @@ class WorkerController {
 
       res.status(201).json({
         success: true,
-        message: 'Worker created successfully',
+        message: req.t ? req.t('workers.created') : 'Worker created successfully',
         data: worker
       });
     } catch (error) {
       if (error.message === 'FIRST_NAME_REQUIRED') {
         return res.status(400).json({
           success: false,
-          error: 'First name is required'
+          error: req.t ? req.t('workers.first_name_required') : 'First name is required'
         });
       }
       if (error.message === 'LAST_NAME_REQUIRED') {
         return res.status(400).json({
           success: false,
-          error: 'Last name is required'
+          error: req.t ? req.t('workers.last_name_required') : 'Last name is required'
         });
       }
       if (error.message === 'INVALID_SALARY') {
         return res.status(400).json({
           success: false,
-          error: 'Salary must be a positive number'
+          error: req.t ? req.t('workers.invalid_salary') : 'Salary must be a positive number'
         });
       }
       if (error.message === 'INVALID_PHONE_FORMAT') {
         return res.status(400).json({
           success: false,
-          error: 'Invalid phone number format'
+          error: req.t ? req.t('workers.invalid_phone') : 'Invalid phone number format'
         });
       }
       next(error);
@@ -133,7 +133,7 @@ class WorkerController {
       if (isNaN(workerId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid worker ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid worker ID'
         });
       }
 
@@ -151,14 +151,14 @@ class WorkerController {
 
       res.json({
         success: true,
-        message: 'Worker updated successfully',
+        message: req.t ? req.t('workers.updated') : 'Worker updated successfully',
         data: worker
       });
     } catch (error) {
       if (error.message === 'WORKER_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Worker not found'
+          error: req.t ? req.t('workers.not_found') : 'Worker not found'
         });
       }
       if (error.message === 'INVALID_SALARY') {
@@ -183,7 +183,7 @@ class WorkerController {
       if (isNaN(workerId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid worker ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid worker ID'
         });
       }
 
@@ -191,13 +191,13 @@ class WorkerController {
 
       res.json({
         success: true,
-        message: 'Worker deleted successfully'
+        message: req.t ? req.t('workers.deleted') : 'Worker deleted successfully'
       });
     } catch (error) {
       if (error.message === 'WORKER_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Worker not found'
+          error: req.t ? req.t('workers.not_found') : 'Worker not found'
         });
       }
       next(error);
@@ -216,7 +216,7 @@ class WorkerController {
       if (isNaN(workerId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid worker ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid worker ID'
         });
       }
 
@@ -234,26 +234,26 @@ class WorkerController {
 
       res.status(201).json({
         success: true,
-        message: 'Certification added successfully',
+        message: req.t ? req.t('workers.certification_added') : 'Certification added successfully',
         data: certification
       });
     } catch (error) {
       if (error.message === 'WORKER_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Worker not found'
+          error: req.t ? req.t('workers.not_found') : 'Worker not found'
         });
       }
       if (error.message === 'CERT_NAME_REQUIRED') {
         return res.status(400).json({
           success: false,
-          error: 'Certification name is required'
+          error: req.t ? req.t('workers.cert_name_required') : 'Certification name is required'
         });
       }
       if (error.message === 'INVALID_EXPIRY_DATE') {
         return res.status(400).json({
           success: false,
-          error: 'Invalid expiry date format'
+          error: req.t ? req.t('workers.invalid_expiry_date') : 'Invalid expiry date format'
         });
       }
       next(error);
@@ -272,7 +272,7 @@ class WorkerController {
       if (isNaN(certId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid certification ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid certification ID'
         });
       }
 
@@ -290,7 +290,7 @@ class WorkerController {
 
       res.json({
         success: true,
-        message: 'Certification updated successfully',
+        message: req.t ? req.t('workers.certification_updated') : 'Certification updated successfully',
         data: certification
       });
     } catch (error) {
@@ -316,7 +316,7 @@ class WorkerController {
       if (isNaN(certId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid certification ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid certification ID'
         });
       }
 
@@ -324,7 +324,7 @@ class WorkerController {
 
       res.json({
         success: true,
-        message: 'Certification deleted successfully'
+        message: req.t ? req.t('workers.certification_deleted') : 'Certification deleted successfully'
       });
     } catch (error) {
       next(error);

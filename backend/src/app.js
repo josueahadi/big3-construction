@@ -56,6 +56,11 @@ app.use('/api/', limiter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// =========================================================
+// Internationalization (i18n) Middleware
+// =========================================================
+const i18nMiddleware = require('./middleware/i18n.middleware');
+app.use(i18nMiddleware);
 
 // =========================================================
 // Passport Initialization

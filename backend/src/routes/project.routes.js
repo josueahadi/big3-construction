@@ -29,6 +29,16 @@ router.get('/stats', requireAuth, adminOnly, projectController.getStatistics);
 router.get('/client/:clientId', requireAuth, projectController.getByClient);
 
 /**
+ * @route   GET /api/projects/nearme
+ * @desc    Get projects near specified coordinates
+ * @access  Private (All authenticated users)
+ * @query   lat - Latitude (-90 to 90)
+ * @query   lng - Longitude (-180 to 180)  
+ * @query   radius - Search radius in kilometers
+ */
+router.get('/nearme', requireAuth, projectController.getNearby);
+
+/**
  * @route   GET /api/projects
  * @desc    Get all projects (with optional filters)
  * @access  Private (All authenticated users)

@@ -1,23 +1,35 @@
--- =========================================================
--- BIG3 CONSTRUCTION - PHASE 2 DATABASE MIGRATIONS
+-- =============================================
+-- BIG3 CONSTRUCTION - DATABASE MIGRATIONS
 -- This script adds new tables and columns required for the
--- backend application (users, geospatial data)
--- =========================================================
+-- backend application (users, geospatial data, multilingual support)
+-- =============================================
 
 USE big3_construction;
 
--- =========================================================
--- MIGRATION 1: Create users table for authentication
--- =========================================================
--- This table stores user accounts for the application
--- Each user is linked to a worker (workers who have app access)
+-- =============================================
+-- GEOSPATIAL SEARCH MIGRATION
+-- =============================================
 
+-- Add geospatial columns to projects table
+ALTER TABLE projects
+ADD COLUMN IF NOT EXISTS latitude DECIMAL(10, 8) NULL COMMENT 'Latitude coordinate',
+ADD COLUMN IF NOT EXISTS longitude DECIMAL(11, 8) NULL COMMENT 'Longitude coordinate';
+
+-- Add index for performance on geospatial queries
+CREATE INDEX IF NOT EXISTS idx_projects_coordinates
+ON projects(latitude, longitude);
+
+-- =============================================
+-- MULTILINGUAL SUPPORT MIGRATION
+-- =============================================
+
+-- Create users table for authentication with i18n support
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('Admin', 'PM', 'Site Supervisor') NOT NULL,
-    preferred_language VARCHAR(10) DEFAULT 'en',
+    preferred_language VARCHAR(10) DEFAULT 'en' COMMENT 'User preferred language (en, es)',
     worker_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -31,85 +43,77 @@ CREATE TABLE IF NOT EXISTS users (
     INDEX idx_users_worker_id (worker_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- =========================================================
--- MIGRATION 2: Add geospatial columns to projects table
--- =========================================================
--- Add latitude and longitude for location-based searches
+-- =============================================
+-- BACKFILL COORDINATES FOR EXISTING PROJECTS
+-- Supports both Ghana and Rwanda cities (Rwandan cities added for testing)
+-- =============================================
 
--- Note: Run this migration only once. If columns already exist, skip or drop them first.
-ALTER TABLE projects
-ADD COLUMN latitude DECIMAL(10, 8) NULL COMMENT 'Latitude coordinate',
-ADD COLUMN longitude DECIMAL(11, 8) NULL COMMENT 'Longitude coordinate';
+-- GHANA CITIES (matching default sample data)
+-- -----------------------------------------------
 
--- Create index for geospatial queries
-CREATE INDEX idx_projects_coordinates
-ON projects(latitude, longitude);
-
--- =========================================================
--- MIGRATION 3: Backfill coordinates for existing projects
--- =========================================================
--- Populate lat/lng for existing projects based on Ghana cities
--- Coordinates are approximate city centers
-
--- Accra (Capital city)
+-- Accra (Capital city, Southern Ghana)
 UPDATE projects
 SET latitude = 5.6037, longitude = -0.1870
 WHERE site_city = 'Accra' AND (latitude IS NULL OR longitude IS NULL);
 
--- Kumasi (Second largest city)
+-- Kumasi (Second largest city, Ashanti Region)
 UPDATE projects
 SET latitude = 6.6885, longitude = -1.6244
 WHERE site_city = 'Kumasi' AND (latitude IS NULL OR longitude IS NULL);
 
--- Takoradi (Western region)
+-- Takoradi (Western Region, Port city)
 UPDATE projects
 SET latitude = 4.8845, longitude = -1.7554
 WHERE site_city = 'Takoradi' AND (latitude IS NULL OR longitude IS NULL);
 
--- Tamale (Northern region)
+-- Tamale (Northern Region)
 UPDATE projects
 SET latitude = 9.4034, longitude = -0.8424
 WHERE site_city = 'Tamale' AND (latitude IS NULL OR longitude IS NULL);
 
--- Cape Coast
+-- Cape Coast (Central Region, Historical city)
 UPDATE projects
 SET latitude = 5.1053, longitude = -1.2466
 WHERE site_city = 'Cape Coast' AND (latitude IS NULL OR longitude IS NULL);
 
--- Tema
+-- Tema (Port city near Accra)
 UPDATE projects
 SET latitude = 5.6698, longitude = 0.0166
 WHERE site_city = 'Tema' AND (latitude IS NULL OR longitude IS NULL);
 
--- =========================================================
--- MIGRATION 4: Create audit log for user actions (Optional)
--- =========================================================
--- This table can be used to track user activities for security
+-- RWANDA CITIES (alternative sample data for testing)
+-- -----------------------------------------------
 
-CREATE TABLE IF NOT EXISTS user_activity_log (
-    log_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    action VARCHAR(100) NOT NULL,
-    resource_type VARCHAR(50),
-    resource_id VARCHAR(50),
-    ip_address VARCHAR(45),
-    user_agent TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+-- Kigali (Capital city)
+UPDATE projects
+SET latitude = -1.9536, longitude = 30.0606
+WHERE site_city = 'Kigali' AND (latitude IS NULL OR longitude IS NULL);
 
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
-    INDEX idx_user_activity_user_id (user_id),
-    INDEX idx_user_activity_created_at (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Huye (Southern Province)
+UPDATE projects
+SET latitude = -2.5958, longitude = 29.7466
+WHERE site_city = 'Huye' AND (latitude IS NULL OR longitude IS NULL);
 
--- =========================================================
--- VERIFICATION QUERIES
--- =========================================================
+-- Muhanga (Southern Province)
+UPDATE projects
+SET latitude = -2.0839, longitude = 29.7390
+WHERE site_city = 'Muhanga' AND (latitude IS NULL OR longitude IS NULL);
 
--- Check if users table was created
-SELECT 'Checking users table...' AS Status;
-DESCRIBE users;
+-- Kayonza (Eastern Province)
+UPDATE projects
+SET latitude = -1.6776, longitude = 30.0878
+WHERE site_city = 'Kayonza' AND (latitude IS NULL OR longitude IS NULL);
 
--- Check if geospatial columns were added
+-- Rubavu (Western Province)
+UPDATE projects
+SET latitude = -1.5000, longitude = 29.6000
+WHERE site_city = 'Rubavu' AND (latitude IS NULL OR longitude IS NULL);
+
+-- =============================================
+-- VERIFICATION QUERIES (Optional - for testing)
+-- =============================================
+
+-- Verify geospatial columns were added
 SELECT 'Checking projects table columns...' AS Status;
 DESCRIBE projects;
 
@@ -121,12 +125,24 @@ SELECT
     SUM(CASE WHEN latitude IS NULL OR longitude IS NULL THEN 1 ELSE 0 END) AS without_coordinates
 FROM projects;
 
--- Show all indexes on projects table
+-- Show sample of projects with coordinates
+SELECT
+    'Sample projects with coordinates:' AS Status,
+    project_id,
+    project_name,
+    site_city,
+    latitude,
+    longitude
+FROM projects
+WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+LIMIT 5;
+
+-- Verify users table was created
+SELECT 'Checking users table...' AS Status;
+DESCRIBE users;
+
+-- Show project indexes
 SELECT 'Project indexes:' AS Status;
-SHOW INDEX FROM projects;
+SHOW INDEX FROM projects WHERE Key_name = 'idx_projects_coordinates';
 
--- Show all tables
-SELECT 'All tables in database:' AS Status;
-SHOW TABLES;
-
-SELECT 'Migration completed successfully!' AS Status;
+SELECT '✅ Migration 07 completed successfully!' AS Status;

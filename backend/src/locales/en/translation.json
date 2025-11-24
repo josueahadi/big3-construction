@@ -1,0 +1,107 @@
+{
+  "auth": {
+    "login_success": "Login successful",
+    "login_failed": "Login failed",
+    "invalid_credentials": "Invalid email or password",
+    "token_expired": "Token expired",
+    "unauthorized": "Unauthorized access",
+    "not_authenticated": "Authentication required",
+    "insufficient_permissions": "Insufficient permissions",
+    "user_exists": "User already exists",
+    "registration_success": "Registration successful"
+  },
+  "crud": {
+    "create_success": "Resource created successfully",
+    "update_success": "Resource updated successfully",
+    "delete_success": "Resource deleted successfully",
+    "not_found": "Resource not found",
+    "validation_error": "Validation failed"
+  },
+  "projects": {
+    "not_found": "Project not found",
+    "created": "Project created successfully",
+    "updated": "Project updated successfully",
+    "deleted": "Project deleted successfully",
+    "id_exists": "A project with this ID already exists",
+    "invalid_id_format": "Project ID must be in format P### (e.g., P001)",
+    "end_before_start": "End date cannot be before start date",
+    "invalid_budget": "Budget must be a positive number"
+  },
+  "workers": {
+    "not_found": "Worker not found",
+    "created": "Worker created successfully",
+    "updated": "Worker updated successfully",
+    "deleted": "Worker deleted successfully",
+    "first_name_required": "First name is required",
+    "last_name_required": "Last name is required",
+    "name_required": "Worker name is required",
+    "invalid_email": "Invalid email format",
+    "email_exists": "A worker with this email already exists",
+    "invalid_role": "Invalid role. Must be PM or Site Supervisor",
+    "invalid_salary": "Salary must be a positive number",
+    "invalid_hourly_rate": "Hourly rate must be a positive number",
+    "invalid_phone": "Invalid phone number format",
+    "has_assignments": "Cannot delete worker with existing project assignments",
+    "certification_added": "Certification added successfully",
+    "certification_updated": "Certification updated successfully",
+    "certification_deleted": "Certification deleted successfully",
+    "cert_name_required": "Certification name is required",
+    "invalid_expiry_date": "Invalid expiry date format"
+  },
+  "clients": {
+    "not_found": "Client not found",
+    "created": "Client created successfully",
+    "updated": "Client updated successfully",
+    "deleted": "Client deleted successfully",
+    "name_required": "Client name is required",
+    "name_too_long": "Client name must not exceed 100 characters",
+    "name_exists": "A client with this name already exists",
+    "invalid_email": "Invalid email format",
+    "invalid_phone": "Invalid phone number format",
+    "has_projects": "Cannot delete client with existing projects"
+  },
+  "materials": {
+    "not_found": "Material not found",
+    "created": "Material created successfully",
+    "updated": "Material updated successfully",
+    "deleted": "Material deleted successfully",
+    "name_required": "Material name is required",
+    "name_too_long": "Material name must not exceed 100 characters",
+    "unit_cost_required": "Unit cost is required",
+    "invalid_unit_cost": "Unit cost must be a positive number",
+    "unit_cost_too_high": "Unit cost exceeds maximum allowed value",
+    "invalid_unit_price": "Unit price must be a positive number",
+    "invalid_stock": "Stock quantity must be zero or positive",
+    "has_usage": "Cannot delete material with existing project usage"
+  },
+  "suppliers": {
+    "not_found": "Supplier not found",
+    "created": "Supplier created successfully",
+    "updated": "Supplier updated successfully",
+    "deleted": "Supplier deleted successfully",
+    "name_required": "Supplier name is required",
+    "name_too_long": "Supplier name must not exceed 100 characters",
+    "name_exists": "A supplier with this name already exists",
+    "invalid_phone": "Invalid phone number format",
+    "has_supplies": "Cannot delete supplier with existing material supplies. Remove supplies first."
+  },
+  "geo": {
+    "invalid_coordinates": "Invalid coordinates",
+    "invalid_latitude": "Latitude must be between -90 and 90",
+    "invalid_longitude": "Longitude must be between -180 and 180",
+    "invalid_radius": "Radius must be a positive number",
+    "no_projects_found": "No projects found in this area",
+    "missing_params": "Missing required parameters: lat, lng, radius",
+    "search_success": "Search completed successfully"
+  },
+  "common": {
+    "invalid_id": "Invalid ID"
+  },
+  "errors": {
+    "server_error": "Internal server error",
+    "database_error": "Database error occurred",
+    "required_field": "This field is required",
+    "invalid_format": "Invalid format",
+    "invalid_id": "Invalid ID"
+  }
+}
