@@ -45,7 +45,7 @@ class ClientController {
       if (isNaN(clientId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid client ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid client ID'
         });
       }
 
@@ -59,7 +59,7 @@ class ClientController {
       if (error.message === 'CLIENT_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Client not found'
+          error: req.t ? req.t('clients.not_found') : 'Client not found'
         });
       }
       next(error);
@@ -87,26 +87,26 @@ class ClientController {
 
       res.status(201).json({
         success: true,
-        message: 'Client created successfully',
+        message: req.t ? req.t('clients.created') : 'Client created successfully',
         data: client
       });
     } catch (error) {
       if (error.message === 'CLIENT_NAME_REQUIRED') {
         return res.status(400).json({
           success: false,
-          error: 'Client name is required'
+          error: req.t ? req.t('clients.name_required') : 'Client name is required'
         });
       }
       if (error.message === 'CLIENT_NAME_EXISTS') {
         return res.status(409).json({
           success: false,
-          error: 'A client with this name already exists'
+          error: req.t ? req.t('clients.name_exists') : 'A client with this name already exists'
         });
       }
       if (error.message === 'INVALID_PHONE_FORMAT') {
         return res.status(400).json({
           success: false,
-          error: 'Invalid phone number format'
+          error: req.t ? req.t('clients.invalid_phone') : 'Invalid phone number format'
         });
       }
       next(error);
@@ -125,7 +125,7 @@ class ClientController {
       if (isNaN(clientId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid client ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid client ID'
         });
       }
 
@@ -143,14 +143,14 @@ class ClientController {
 
       res.json({
         success: true,
-        message: 'Client updated successfully',
+        message: req.t ? req.t('clients.updated') : 'Client updated successfully',
         data: client
       });
     } catch (error) {
       if (error.message === 'CLIENT_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Client not found'
+          error: req.t ? req.t('clients.not_found') : 'Client not found'
         });
       }
       if (error.message === 'CLIENT_NAME_EXISTS') {
@@ -175,7 +175,7 @@ class ClientController {
       if (isNaN(clientId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid client ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid client ID'
         });
       }
 
@@ -183,19 +183,19 @@ class ClientController {
 
       res.json({
         success: true,
-        message: 'Client deleted successfully'
+        message: req.t ? req.t('clients.deleted') : 'Client deleted successfully'
       });
     } catch (error) {
       if (error.message === 'CLIENT_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Client not found'
+          error: req.t ? req.t('clients.not_found') : 'Client not found'
         });
       }
       if (error.message === 'CLIENT_HAS_PROJECTS') {
         return res.status(400).json({
           success: false,
-          error: 'Cannot delete client with existing projects. Delete or reassign projects first.'
+          error: req.t ? req.t('clients.has_projects') : 'Cannot delete client with existing projects. Delete or reassign projects first.'
         });
       }
       next(error);

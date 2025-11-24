@@ -2,7 +2,7 @@
   "auth": {
     "login_success": "Inicio de sesión exitoso",
     "login_failed": "Falló el inicio de sesión",
-    "invalid_credentials": "Correo electrónico o contraseña inválidos", 
+    "invalid_credentials": "Correo electrónico o contraseña inválidos",
     "token_expired": "Token expirado",
     "unauthorized": "Acceso no autorizado",
     "not_authenticated": "Se requiere autenticación",
@@ -13,7 +13,7 @@
   "crud": {
     "create_success": "Recurso creado exitosamente",
     "update_success": "Recurso actualizado exitosamente",
-    "delete_success": "Recurso eliminado exitosamente", 
+    "delete_success": "Recurso eliminado exitosamente",
     "not_found": "Recurso no encontrado",
     "validation_error": "Validación fallida"
   },
@@ -27,19 +27,81 @@
     "end_before_start": "La fecha de finalización no puede ser anterior a la fecha de inicio",
     "invalid_budget": "El presupuesto debe ser un número positivo"
   },
+  "workers": {
+    "not_found": "Trabajador no encontrado",
+    "created": "Trabajador creado exitosamente",
+    "updated": "Trabajador actualizado exitosamente",
+    "deleted": "Trabajador eliminado exitosamente",
+    "first_name_required": "Se requiere el nombre",
+    "last_name_required": "Se requiere el apellido",
+    "name_required": "Se requiere el nombre del trabajador",
+    "invalid_email": "Formato de correo electrónico inválido",
+    "email_exists": "Ya existe un trabajador con este correo electrónico",
+    "invalid_role": "Rol inválido. Debe ser PM o Supervisor de Sitio",
+    "invalid_salary": "El salario debe ser un número positivo",
+    "invalid_hourly_rate": "La tarifa por hora debe ser un número positivo",
+    "invalid_phone": "Formato de número de teléfono inválido",
+    "has_assignments": "No se puede eliminar un trabajador con asignaciones de proyecto existentes",
+    "certification_added": "Certificación agregada exitosamente",
+    "certification_updated": "Certificación actualizada exitosamente",
+    "certification_deleted": "Certificación eliminada exitosamente",
+    "cert_name_required": "Se requiere el nombre de la certificación",
+    "invalid_expiry_date": "Formato de fecha de vencimiento inválido"
+  },
+  "clients": {
+    "not_found": "Cliente no encontrado",
+    "created": "Cliente creado exitosamente",
+    "updated": "Cliente actualizado exitosamente",
+    "deleted": "Cliente eliminado exitosamente",
+    "name_required": "Se requiere el nombre del cliente",
+    "name_too_long": "El nombre del cliente no debe exceder los 100 caracteres",
+    "name_exists": "Ya existe un cliente con este nombre",
+    "invalid_email": "Formato de correo electrónico inválido",
+    "invalid_phone": "Formato de número de teléfono inválido",
+    "has_projects": "No se puede eliminar un cliente con proyectos existentes"
+  },
+  "materials": {
+    "not_found": "Material no encontrado",
+    "created": "Material creado exitosamente",
+    "updated": "Material actualizado exitosamente",
+    "deleted": "Material eliminado exitosamente",
+    "name_required": "Se requiere el nombre del material",
+    "name_too_long": "El nombre del material no debe exceder los 100 caracteres",
+    "unit_cost_required": "Se requiere el costo unitario",
+    "invalid_unit_cost": "El costo unitario debe ser un número positivo",
+    "unit_cost_too_high": "El costo unitario excede el valor máximo permitido",
+    "invalid_unit_price": "El precio unitario debe ser un número positivo",
+    "invalid_stock": "La cantidad de existencias debe ser cero o positiva",
+    "has_usage": "No se puede eliminar un material con uso de proyecto existente"
+  },
+  "suppliers": {
+    "not_found": "Proveedor no encontrado",
+    "created": "Proveedor creado exitosamente",
+    "updated": "Proveedor actualizado exitosamente",
+    "deleted": "Proveedor eliminado exitosamente",
+    "name_required": "Se requiere el nombre del proveedor",
+    "name_too_long": "El nombre del proveedor no debe exceder los 100 caracteres",
+    "name_exists": "Ya existe un proveedor con este nombre",
+    "invalid_phone": "Formato de número de teléfono inválido",
+    "has_supplies": "No se puede eliminar un proveedor con suministros de materiales existentes. Elimine los suministros primero."
+  },
   "geo": {
     "invalid_coordinates": "Coordenadas inválidas",
     "invalid_latitude": "La latitud debe estar entre -90 y 90",
     "invalid_longitude": "La longitud debe estar entre -180 y 180",
-    "invalid_radius": "El radio debe ser un número positivo", 
+    "invalid_radius": "El radio debe ser un número positivo",
     "no_projects_found": "No se encontraron proyectos en esta área",
     "missing_params": "Faltan parámetros requeridos: lat, lng, radius",
     "search_success": "Búsqueda completada exitosamente"
+  },
+  "common": {
+    "invalid_id": "ID inválido"
   },
   "errors": {
     "server_error": "Error interno del servidor",
     "database_error": "Ocurrió un error en la base de datos",
     "required_field": "Este campo es requerido",
-    "invalid_format": "Formato inválido"
+    "invalid_format": "Formato inválido",
+    "invalid_id": "ID inválido"
   }
 }

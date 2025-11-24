@@ -45,7 +45,7 @@ class SupplierController {
       if (isNaN(supplierId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid supplier ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid supplier ID'
         });
       }
 
@@ -59,7 +59,7 @@ class SupplierController {
       if (error.message === 'SUPPLIER_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Supplier not found'
+          error: req.t ? req.t('suppliers.not_found') : 'Supplier not found'
         });
       }
       next(error);
@@ -87,32 +87,32 @@ class SupplierController {
 
       res.status(201).json({
         success: true,
-        message: 'Supplier created successfully',
+        message: req.t ? req.t('suppliers.created') : 'Supplier created successfully',
         data: supplier
       });
     } catch (error) {
       if (error.message === 'SUPPLIER_NAME_REQUIRED') {
         return res.status(400).json({
           success: false,
-          error: 'Supplier name is required'
+          error: req.t ? req.t('suppliers.name_required') : 'Supplier name is required'
         });
       }
       if (error.message === 'SUPPLIER_NAME_TOO_LONG') {
         return res.status(400).json({
           success: false,
-          error: 'Supplier name must not exceed 100 characters'
+          error: req.t ? req.t('suppliers.name_too_long') : 'Supplier name must not exceed 100 characters'
         });
       }
       if (error.message === 'SUPPLIER_NAME_EXISTS') {
         return res.status(409).json({
           success: false,
-          error: 'A supplier with this name already exists'
+          error: req.t ? req.t('suppliers.name_exists') : 'A supplier with this name already exists'
         });
       }
       if (error.message === 'INVALID_PHONE_FORMAT') {
         return res.status(400).json({
           success: false,
-          error: 'Invalid phone number format'
+          error: req.t ? req.t('suppliers.invalid_phone') : 'Invalid phone number format'
         });
       }
       next(error);
@@ -131,7 +131,7 @@ class SupplierController {
       if (isNaN(supplierId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid supplier ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid supplier ID'
         });
       }
 
@@ -149,38 +149,38 @@ class SupplierController {
 
       res.json({
         success: true,
-        message: 'Supplier updated successfully',
+        message: req.t ? req.t('suppliers.updated') : 'Supplier updated successfully',
         data: supplier
       });
     } catch (error) {
       if (error.message === 'SUPPLIER_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Supplier not found'
+          error: req.t ? req.t('suppliers.not_found') : 'Supplier not found'
         });
       }
       if (error.message === 'SUPPLIER_NAME_REQUIRED') {
         return res.status(400).json({
           success: false,
-          error: 'Supplier name cannot be empty'
+          error: req.t ? req.t('suppliers.name_required') : 'Supplier name cannot be empty'
         });
       }
       if (error.message === 'SUPPLIER_NAME_TOO_LONG') {
         return res.status(400).json({
           success: false,
-          error: 'Supplier name must not exceed 100 characters'
+          error: req.t ? req.t('suppliers.name_too_long') : 'Supplier name must not exceed 100 characters'
         });
       }
       if (error.message === 'SUPPLIER_NAME_EXISTS') {
         return res.status(409).json({
           success: false,
-          error: 'A supplier with this name already exists'
+          error: req.t ? req.t('suppliers.name_exists') : 'A supplier with this name already exists'
         });
       }
       if (error.message === 'INVALID_PHONE_FORMAT') {
         return res.status(400).json({
           success: false,
-          error: 'Invalid phone number format'
+          error: req.t ? req.t('suppliers.invalid_phone') : 'Invalid phone number format'
         });
       }
       next(error);
@@ -199,7 +199,7 @@ class SupplierController {
       if (isNaN(supplierId)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid supplier ID'
+          error: req.t ? req.t('common.invalid_id') : 'Invalid supplier ID'
         });
       }
 
@@ -207,19 +207,19 @@ class SupplierController {
 
       res.json({
         success: true,
-        message: 'Supplier deleted successfully'
+        message: req.t ? req.t('suppliers.deleted') : 'Supplier deleted successfully'
       });
     } catch (error) {
       if (error.message === 'SUPPLIER_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Supplier not found'
+          error: req.t ? req.t('suppliers.not_found') : 'Supplier not found'
         });
       }
       if (error.message === 'SUPPLIER_HAS_SUPPLIES') {
         return res.status(400).json({
           success: false,
-          error: 'Cannot delete supplier with existing material supplies. Remove supplies first.'
+          error: req.t ? req.t('suppliers.has_supplies') : 'Cannot delete supplier with existing material supplies. Remove supplies first.'
         });
       }
       next(error);
