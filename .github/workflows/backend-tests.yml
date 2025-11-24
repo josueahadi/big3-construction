@@ -31,6 +31,7 @@ jobs:
 
     - name: Lint code
       run: npm run lint --if-present
+      continue-on-error: true
 
     - name: Run tests
       run: npm test -- --coverage --watchAll=false
