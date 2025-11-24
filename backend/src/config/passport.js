@@ -1,3 +1,5 @@
+require('dotenv').config(); // ← ADD THIS LINE TO LOAD ENVIRONMENT VARIABLES
+
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const userRepository = require('../repositories/user.repository');
 
