@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "i18next": "^25.6.3",
-    "i18next-fs-backend": "^2.6.1",
-    "i18next-http-middleware": "^3.8.2"
-  }
-}
