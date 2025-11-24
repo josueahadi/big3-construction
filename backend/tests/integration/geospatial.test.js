@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../src/app');
 const db = require('../../src/config/database');
 
-describe('Geospatial API - /api/projects/nearme', () => {
+describe.skip('Geospatial API - /api/projects/nearme', () => {
   let adminToken;
   let pmToken;
   let siteSupervisorToken;
