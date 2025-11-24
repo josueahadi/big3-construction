@@ -1,0 +1,45 @@
+{
+  "auth": {
+    "login_success": "Login successful",
+    "login_failed": "Login failed", 
+    "invalid_credentials": "Invalid email or password",
+    "token_expired": "Token expired",
+    "unauthorized": "Unauthorized access",
+    "not_authenticated": "Authentication required",
+    "insufficient_permissions": "Insufficient permissions",
+    "user_exists": "User already exists",
+    "registration_success": "Registration successful"
+  },
+  "crud": {
+    "create_success": "Resource created successfully",
+    "update_success": "Resource updated successfully", 
+    "delete_success": "Resource deleted successfully",
+    "not_found": "Resource not found",
+    "validation_error": "Validation failed"
+  },
+  "projects": {
+    "not_found": "Project not found",
+    "created": "Project created successfully",
+    "updated": "Project updated successfully",
+    "deleted": "Project deleted successfully",
+    "id_exists": "A project with this ID already exists",
+    "invalid_id_format": "Project ID must be in format P### (e.g., P001)",
+    "end_before_start": "End date cannot be before start date", 
+    "invalid_budget": "Budget must be a positive number"
+  },
+  "geo": {
+    "invalid_coordinates": "Invalid coordinates",
+    "invalid_latitude": "Latitude must be between -90 and 90",
+    "invalid_longitude": "Longitude must be between -180 and 180", 
+    "invalid_radius": "Radius must be a positive number",
+    "no_projects_found": "No projects found in this area",
+    "missing_params": "Missing required parameters: lat, lng, radius",
+    "search_success": "Search completed successfully"
+  },
+  "errors": {
+    "server_error": "Internal server error",
+    "database_error": "Database error occurred",
+    "required_field": "This field is required",
+    "invalid_format": "Invalid format"
+  }
+}

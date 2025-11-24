@@ -1,0 +1,45 @@
+{
+  "auth": {
+    "login_success": "Inicio de sesión exitoso",
+    "login_failed": "Falló el inicio de sesión",
+    "invalid_credentials": "Correo electrónico o contraseña inválidos", 
+    "token_expired": "Token expirado",
+    "unauthorized": "Acceso no autorizado",
+    "not_authenticated": "Se requiere autenticación",
+    "insufficient_permissions": "Permisos insuficientes",
+    "user_exists": "El usuario ya existe",
+    "registration_success": "Registro exitoso"
+  },
+  "crud": {
+    "create_success": "Recurso creado exitosamente",
+    "update_success": "Recurso actualizado exitosamente",
+    "delete_success": "Recurso eliminado exitosamente", 
+    "not_found": "Recurso no encontrado",
+    "validation_error": "Validación fallida"
+  },
+  "projects": {
+    "not_found": "Proyecto no encontrado",
+    "created": "Proyecto creado exitosamente",
+    "updated": "Proyecto actualizado exitosamente",
+    "deleted": "Proyecto eliminado exitosamente",
+    "id_exists": "Ya existe un proyecto con este ID",
+    "invalid_id_format": "El ID del proyecto debe estar en formato P### (ej., P001)",
+    "end_before_start": "La fecha de finalización no puede ser anterior a la fecha de inicio",
+    "invalid_budget": "El presupuesto debe ser un número positivo"
+  },
+  "geo": {
+    "invalid_coordinates": "Coordenadas inválidas",
+    "invalid_latitude": "La latitud debe estar entre -90 y 90",
+    "invalid_longitude": "La longitud debe estar entre -180 y 180",
+    "invalid_radius": "El radio debe ser un número positivo", 
+    "no_projects_found": "No se encontraron proyectos en esta área",
+    "missing_params": "Faltan parámetros requeridos: lat, lng, radius",
+    "search_success": "Búsqueda completada exitosamente"
+  },
+  "errors": {
+    "server_error": "Error interno del servidor",
+    "database_error": "Ocurrió un error en la base de datos",
+    "required_field": "Este campo es requerido",
+    "invalid_format": "Formato inválido"
+  }
+}
