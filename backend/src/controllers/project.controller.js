@@ -1,5 +1,6 @@
 const projectService = require('../services/project.service');
 const { validationResult } = require('express-validator');
+const geospatialService = require('../services/geospatial.service');
 
 /**
  * Project Controller
@@ -261,6 +262,96 @@ class ProjectController {
         data: projects
       });
     } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Get projects near specified coordinates
+   * @route GET /api/projects/nearme
+   * @access Private
+   * @param {number} req.query.lat - Latitude (-90 to 90)
+   * @param {number} req.query.lng - Longitude (-180 to 180)  
+   * @param {number} req.query.radius - Search radius in kilometers
+   * @returns {object} Projects within radius sorted by distance
+   */
+  async getNearby(req, res, next) {
+    try {
+      const { lat, lng, radius } = req.query;
+
+      // Validate required parameters
+      if (!lat || !lng || !radius) {
+        return res.status(400).json({
+          success: false,
+          error: req.t ? req.t('geo.missing_params') : 'Missing required parameters: lat, lng, radius'
+        });
+      }
+
+      // Parse and validate coordinates
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+      const searchRadius = parseFloat(radius);
+
+      if (isNaN(latitude) || latitude < -90 || latitude > 90) {
+        return res.status(400).json({
+          success: false,
+          error: req.t ? req.t('geo.invalid_latitude') : 'Invalid latitude. Must be between -90 and 90'
+        });
+      }
+
+      if (isNaN(longitude) || longitude < -180 || longitude > 180) {
+        return res.status(400).json({
+          success: false, 
+          error: req.t ? req.t('geo.invalid_longitude') : 'Invalid longitude. Must be between -180 and 180'
+        });
+      }
+
+      if (isNaN(searchRadius) || searchRadius <= 0) {
+        return res.status(400).json({
+          success: false,
+          error: req.t ? req.t('geo.invalid_radius') : 'Invalid radius. Must be a positive number'
+        });
+      }
+
+      // Get nearby projects
+      const projects = await geospatialService.getProjectsNearLocation(
+        latitude,
+        longitude, 
+        searchRadius,
+        req.user
+      );
+
+      // Prepare response
+      const response = {
+        success: true,
+        count: projects.length,
+        search_location: {
+          latitude,
+          longitude, 
+          radius_km: searchRadius
+        },
+        data: projects
+      };
+
+      // Add translated message if i18n is available
+      if (req.t) {
+        response.message = projects.length > 0 
+          ? req.t('geo.search_success') 
+          : req.t('geo.no_projects_found');
+      }
+
+      res.json(response);
+
+    } catch (error) {
+      console.error('Get nearby projects error:', error);
+      
+      if (error.message === 'DATABASE_ERROR') {
+        return res.status(500).json({
+          success: false,
+          error: req.t ? req.t('errors.database_error') : 'Database error occurred'
+        });
+      }
+      
       next(error);
     }
   }
