@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  mysql:
+    image: mysql:8.0
+    container_name: big3_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: your_mysql_password_here
+      MYSQL_DATABASE: big3_construction
+      MYSQL_USER: big3_user
+      MYSQL_PASSWORD: big3_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - big3_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 5s
+
+  # RabbitMQ Service
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: big3_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - big3_network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      timeout: 20s
+      retries: 5
+      interval: 5s
+
+volumes:
+  mysql_data:
+  rabbitmq_data:
+
+networks:
+  big3_network:
+    driver: bridge

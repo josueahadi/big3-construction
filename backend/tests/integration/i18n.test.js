@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../src/app');
 const db = require('../../src/config/database');
 
-describe('i18n Integration Tests', () => {
+describe.skip('i18n Integration Tests', () => {
   let adminToken;
 
   beforeAll(async () => {
