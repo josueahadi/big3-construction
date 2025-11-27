@@ -13,7 +13,7 @@ Before you begin, make sure you have:
 
 ---
 
-## Part 1: Database Setup (Required for Both SQL Modules & Backend API)
+## Database Setup (Required for Backend API)
 
 ### Step 1: Open MySQL Workbench
 
@@ -118,8 +118,6 @@ In MySQL Workbench's left sidebar (Navigator panel):
 2. You should now see **`big3_construction`**
 3. Expand it to see:
    - **Tables** (12 tables)
-   - **Views** (empty for now - you'll create these in Module 3)
-   - **Stored Procedures** (empty - you'll create these in Module 4)
 
 4. **Browse some data:**
    - Expand **Tables**
@@ -128,24 +126,7 @@ In MySQL Workbench's left sidebar (Navigator panel):
 
 ---
 
-## Part 2: For SQL Modules (Formative 1)
-
-If you're working on the SQL modules (indexes, views, procedures, etc.):
-
-### Run the modules in order:
-
-1. **Module 1: Indexes** → `module-1/01_indexes.sql`
-2. **Module 2: Subqueries** → `module-2/02_subqueries.sql`
-3. **Module 3: Views** → `module-3/03_views.sql`
-4. **Module 4: Procedures** → `module-4/04_procedures.sql`
-5. **Module 5: Triggers** → `module-5/05_triggers.sql`
-6. **Module 6: Events** → `module-6/06_events.sql`
-
-**Follow the detailed testing instructions in:** [`TESTING_GUIDE.md`](TESTING_GUIDE.md)
-
----
-
-## Part 3: For Backend API (Summative)
+## Backend API Setup
 
 If you're working on the Node.js backend API:
 
@@ -210,7 +191,7 @@ curl -X POST http://localhost:5001/api/auth/login \
 **Solution:** The insert script inserts data in the correct order (parent tables first). Make sure you run the entire script, not individual INSERT statements.
 
 ### Problem: "users table doesn't exist" in backend
-**Solution:** Make sure you ran migrations 03 and 04 (backend schema and seed users).
+**Solution:** Make sure you ran migrations 07 and 08 (migrations for backend schema and seed users).
 
 ### Problem: Backend won't start
 **Solution:**
@@ -275,11 +256,6 @@ After running migration 04, you'll have these test accounts:
 ---
 
 ## Next Steps
-
-### For SQL Work:
-1. Open [`TESTING_GUIDE.md`](TESTING_GUIDE.md)
-2. Start testing Module 1 (Indexes)
-3. Work through each module in order
 
 ### For Backend API:
 1. Open [`backend/README.md`](backend/README.md)
