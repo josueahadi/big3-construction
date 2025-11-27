@@ -6,18 +6,65 @@
 
 USE big3_construction;
 
+-- Disable safe update mode for this migration
+SET SQL_SAFE_UPDATES = 0;
+
 -- =============================================
 -- GEOSPATIAL SEARCH MIGRATION
 -- =============================================
 
--- Add geospatial columns to projects table
-ALTER TABLE projects
-ADD COLUMN IF NOT EXISTS latitude DECIMAL(10, 8) NULL COMMENT 'Latitude coordinate',
-ADD COLUMN IF NOT EXISTS longitude DECIMAL(11, 8) NULL COMMENT 'Longitude coordinate';
+-- Add geospatial columns to projects table (safe version - checks if columns exist)
+SET @db_name = DATABASE();
+SET @latitude_exists = (
+    SELECT COUNT(*) 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_SCHEMA = @db_name 
+    AND TABLE_NAME = 'projects' 
+    AND COLUMN_NAME = 'latitude'
+);
 
--- Add index for performance on geospatial queries
-CREATE INDEX IF NOT EXISTS idx_projects_coordinates
-ON projects(latitude, longitude);
+SET @longitude_exists = (
+    SELECT COUNT(*) 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_SCHEMA = @db_name 
+    AND TABLE_NAME = 'projects' 
+    AND COLUMN_NAME = 'longitude'
+);
+
+-- Add latitude column if it doesn't exist
+SET @sql_latitude = IF(@latitude_exists = 0,
+    'ALTER TABLE projects ADD COLUMN latitude DECIMAL(10, 8) NULL COMMENT "Latitude coordinate"',
+    'SELECT "Column latitude already exists" AS Info'
+);
+PREPARE stmt FROM @sql_latitude;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Add longitude column if it doesn't exist
+SET @sql_longitude = IF(@longitude_exists = 0,
+    'ALTER TABLE projects ADD COLUMN longitude DECIMAL(11, 8) NULL COMMENT "Longitude coordinate"',
+    'SELECT "Column longitude already exists" AS Info'
+);
+PREPARE stmt FROM @sql_longitude;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Add index for performance on geospatial queries (safe version - checks if index exists)
+SET @index_exists = (
+    SELECT COUNT(*) 
+    FROM INFORMATION_SCHEMA.STATISTICS 
+    WHERE TABLE_SCHEMA = @db_name 
+    AND TABLE_NAME = 'projects' 
+    AND INDEX_NAME = 'idx_projects_coordinates'
+);
+
+SET @sql_index = IF(@index_exists = 0,
+    'CREATE INDEX idx_projects_coordinates ON projects(latitude, longitude)',
+    'SELECT "Index idx_projects_coordinates already exists" AS Info'
+);
+PREPARE stmt FROM @sql_index;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- =============================================
 -- MULTILINGUAL SUPPORT MIGRATION
@@ -144,5 +191,8 @@ DESCRIBE users;
 -- Show project indexes
 SELECT 'Project indexes:' AS Status;
 SHOW INDEX FROM projects WHERE Key_name = 'idx_projects_coordinates';
+
+-- Re-enable safe update mode
+SET SQL_SAFE_UPDATES = 1;
 
 SELECT '✅ Migration 07 completed successfully!' AS Status;
