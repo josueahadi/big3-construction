@@ -7,27 +7,27 @@ const DAYS_AHEAD = Number(process.env.CERT_EXPIRY_WARNING_DAYS || 30);
 const CRON_EXPR = process.env.CERT_CHECK_CRON || '10 0 * * *'; // default daily at 00:10
 
 async function findExpiringCerts() {
-  
+
   const sql = `
-    SELECT
+    SELECT DISTINCT
       c.cert_id,
       c.cert_name,
-      DATE(c.expires_at) AS expires_at,
-      DATEDIFF(DATE(c.expires_at), CURDATE()) AS days_left,
+      DATE(c.expiry_date) AS expires_at,
+      DATEDIFF(DATE(c.expiry_date), CURDATE()) AS days_left,
       w.worker_id,
       COALESCE(w.first_name, '') AS worker_first_name,
       COALESCE(w.last_name, '') AS worker_last_name,
-      pm.user_id AS pm_user_id,
-      pm.email AS pm_email,
-      COALESCE(pm.first_name, '') AS pm_first_name,
-      COALESCE(pm.last_name, '') AS pm_last_name
+      u.user_id AS pm_user_id,
+      u.email AS pm_email,
+      COALESCE(w_pm.first_name, '') AS pm_first_name,
+      COALESCE(w_pm.last_name, '') AS pm_last_name
     FROM certifications c
     JOIN workers w ON c.worker_id = w.worker_id
-    /* try to get PM via project_assignments or worker.pm_user_id - adjust as needed */
     LEFT JOIN project_assignments pa ON pa.worker_id = w.worker_id
-    LEFT JOIN users pm ON pa.pm_user_id = pm.user_id OR w.pm_user_id = pm.user_id
-    WHERE DATE(c.expires_at) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
-    ORDER BY DATE(c.expires_at) ASC;
+    LEFT JOIN users u ON u.role = 'PM' AND u.worker_id IS NOT NULL
+    LEFT JOIN workers w_pm ON u.worker_id = w_pm.worker_id
+    WHERE DATE(c.expiry_date) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
+    ORDER BY DATE(c.expiry_date) ASC;
   `;
   try {
     const [rows] = await pool.query(sql, [DAYS_AHEAD]);

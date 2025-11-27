@@ -373,9 +373,9 @@ The certification expiry notification system uses a producer-consumer pattern wi
 
 2. Ensure you have test data with certifications:
    ```sql
-   SELECT cert_id, cert_name, expires_at, DATEDIFF(expires_at, CURDATE()) AS days_left
+   SELECT cert_id, cert_name, expiry_date, DATEDIFF(expiry_date, CURDATE()) AS days_left
    FROM certifications
-   WHERE expires_at BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY);
+   WHERE expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY);
    ```
 
 #### Option 1: Manual Testing (Quick Test)
@@ -428,7 +428,7 @@ npm test -- notification.consumer.test.js
 1. **Add test certification expiring soon:**
    ```sql
    UPDATE certifications
-   SET expires_at = DATE_ADD(CURDATE(), INTERVAL 15 DAY)
+   SET expiry_date = DATE_ADD(CURDATE(), INTERVAL 15 DAY)
    WHERE cert_id = 1;
    ```
 
