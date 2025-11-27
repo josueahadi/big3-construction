@@ -54,7 +54,7 @@ class ProjectController {
       if (error.message === 'PROJECT_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Project not found'
+          error: req.t ? req.t('projects.not_found') : 'Project not found'
         });
       }
       next(error);
@@ -73,7 +73,7 @@ class ProjectController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -84,7 +84,7 @@ class ProjectController {
 
       res.status(201).json({
         success: true,
-        message: 'Project created successfully',
+        message: req.t ? req.t('projects.created') : 'Project created successfully',
         data: project
       });
     } catch (error) {
@@ -105,28 +105,28 @@ class ProjectController {
       if (error.message === 'PROJECT_ID_EXISTS') {
         return res.status(409).json({
           success: false,
-          error: 'A project with this ID already exists'
+          error: req.t ? req.t('projects.id_exists') : 'A project with this ID already exists'
         });
       }
 
       if (error.message === 'INVALID_PROJECT_ID_FORMAT') {
         return res.status(400).json({
           success: false,
-          error: 'Project ID must be in format P### (e.g., P001, P002)'
+          error: req.t ? req.t('projects.invalid_id_format') : 'Project ID must be in format P### (e.g., P001, P002)'
         });
       }
 
       if (error.message === 'END_DATE_BEFORE_START_DATE') {
         return res.status(400).json({
           success: false,
-          error: 'End date cannot be before start date'
+          error: req.t ? req.t('projects.end_before_start') : 'End date cannot be before start date'
         });
       }
 
       if (error.message === 'INVALID_BUDGET') {
         return res.status(400).json({
           success: false,
-          error: 'Budget must be a positive number'
+          error: req.t ? req.t('projects.invalid_budget') : 'Budget must be a positive number'
         });
       }
 
@@ -153,7 +153,7 @@ class ProjectController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -165,28 +165,28 @@ class ProjectController {
 
       res.json({
         success: true,
-        message: 'Project updated successfully',
+        message: req.t ? req.t('projects.updated') : 'Project updated successfully',
         data: project
       });
     } catch (error) {
       if (error.message === 'PROJECT_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Project not found'
+          error: req.t ? req.t('projects.not_found') : 'Project not found'
         });
       }
 
       if (error.message === 'END_DATE_BEFORE_START_DATE') {
         return res.status(400).json({
           success: false,
-          error: 'End date cannot be before start date'
+          error: req.t ? req.t('projects.end_before_start') : 'End date cannot be before start date'
         });
       }
 
       if (error.message === 'INVALID_BUDGET') {
         return res.status(400).json({
           success: false,
-          error: 'Budget must be a positive number'
+          error: req.t ? req.t('projects.invalid_budget') : 'Budget must be a positive number'
         });
       }
 
@@ -214,13 +214,13 @@ class ProjectController {
 
       res.json({
         success: true,
-        message: 'Project deleted successfully'
+        message: req.t ? req.t('projects.deleted') : 'Project deleted successfully'
       });
     } catch (error) {
       if (error.message === 'PROJECT_NOT_FOUND') {
         return res.status(404).json({
           success: false,
-          error: 'Project not found'
+          error: req.t ? req.t('projects.not_found') : 'Project not found'
         });
       }
 
