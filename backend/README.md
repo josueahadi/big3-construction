@@ -227,6 +227,14 @@ The API will be available at: `http://localhost:5001`
 
 This section provides a quick overview of the main endpoints. For comprehensive documentation including all endpoints, request/response schemas, and examples, see the complete API reference.
 
+### Testing the API
+
+You can test the API using:
+- **curl** (command line examples shown below)
+- **Postman** (recommended - see [TEST_CREDENTIALS.md](TEST_CREDENTIALS.md) for setup guide)
+- **Thunder Client** (VS Code extension)
+- **Insomnia** or any HTTP client
+
 ### Base URL
 ```
 http://localhost:5001/api

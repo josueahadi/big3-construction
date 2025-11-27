@@ -2,6 +2,16 @@
 
 Complete API reference for the Big3 Construction Management System.
 
+## Testing the API
+
+You can test these endpoints using:
+- **Postman** (recommended) - Import the examples below as a collection
+- **curl** - Command line examples provided for each endpoint
+- **Thunder Client** - VS Code extension
+- **Insomnia** or any other HTTP client
+
+> **Quick Start:** See [TEST_CREDENTIALS.md](../TEST_CREDENTIALS.md) for ready-to-use test accounts and Postman setup instructions.
+
 ## Base URL
 
 ```

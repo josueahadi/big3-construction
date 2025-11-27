@@ -459,6 +459,6 @@ For your documentation/presentation, consider taking screenshots of:
 
 ---
 
-**Good luck with your testing!** 🎉
+**Good luck with the testing!**
 
 If you encounter any issues, refer back to the module-specific README files in each folder for additional context.
