@@ -377,7 +377,34 @@ npm test
 
 The certification expiry notification system uses a producer-consumer pattern with Redis. Here's how to test it:
 
+**How it works:**
+1. **Producer** (`certExpiryProducer.js`) - Runs on a cron schedule, queries the database for expiring certifications, and enqueues notification messages to Redis
+2. **Redis Queue** - Stores messages until consumed
+3. **Consumer** (`certExpiryConsumer.js`) - Continuously listens for messages and processes them (currently logs to console, would send emails in production)
+
+**What triggers notifications:**
+- Certifications expiring within `CERT_EXPIRY_WARNING_DAYS` (default: 30 days)
+- Scheduled by cron expression in `CERT_CHECK_CRON` environment variable
+- Can also be triggered manually for testing
+
 #### Prerequisites
+
+**IMPORTANT:** Before testing, ensure your `.env` file has Redis configuration:
+
+```env
+# Redis Configuration (Required for notifications)
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+REDIS_PASSWORD=
+CERT_QUEUE_NAME=cert_notifications
+
+# Notification Settings
+CERT_EXPIRY_WARNING_DAYS=30
+CERT_CHECK_CRON=0 9 * * *  # Daily at 9 AM (or use */5 * * * * * for testing every 5 seconds)
+```
+
+If Redis config is missing from your `.env`, copy it from `.env.example` or add it manually.
+
 1. Ensure Redis is running:
    ```bash
    redis-cli ping  # Should return: PONG
@@ -388,6 +415,11 @@ The certification expiry notification system uses a producer-consumer pattern wi
    SELECT cert_id, cert_name, expiry_date, DATEDIFF(expiry_date, CURDATE()) AS days_left
    FROM certifications
    WHERE expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY);
+   ```
+
+3. **(Optional) Clear any existing messages in the queue:**
+   ```bash
+   redis-cli DEL cert_notifications
    ```
 
 #### Option 1: Manual Testing (Quick Test)
@@ -413,7 +445,47 @@ Expected output: `NOTIFICATION: Sending email to PM...`
 
 Press `Ctrl+C` to stop the consumer.
 
-#### Option 2: Testing with npm scripts
+#### Option 2: Quick Development Testing (Every 5 Seconds)
+
+For rapid testing during development, you can set the cron to run every 5 seconds:
+
+**Step 1: Update `.env` for fast testing**
+```env
+CERT_CHECK_CRON=*/5 * * * * *  # Runs every 5 seconds
+```
+
+**Step 2: Terminal 1 - Start consumer**
+```bash
+npm run consumer
+```
+Output: `[Consumer] Starting; waiting for queue messages...`
+
+**Step 3: Terminal 2 - Start producer with fast cron**
+```bash
+npm run cert-checker
+```
+Output: `[cert-checker.job.js] Producer started and scheduled`
+
+**Step 4: Watch notifications appear every 5 seconds**
+
+The consumer (Terminal 1) will show notifications like:
+```
+NOTIFICATION: Sending email to PM Maria Garcia <maria.garcia@big3construction.com>
+for worker John Johnson (ID 1) - certification "Basic Safety" expires in 15 days
+on 2025-12-12. (cert_id: 1)
+```
+
+**Step 5: Stop and reset**
+- Press `Ctrl+C` in both terminals
+- Clear the queue: `redis-cli DEL cert_notifications`
+- Reset `.env` to daily schedule: `CERT_CHECK_CRON=0 9 * * *`
+
+**Note:** The 5-second cron is only for development/testing. Use daily schedule in production to avoid:
+- Database overload from constant queries
+- Duplicate notifications filling the queue
+- Unnecessary Redis memory usage
+
+#### Option 3: Testing with npm scripts (Production Mode)
 
 **Terminal 1 - Start Consumer (runs continuously)**
 ```bash
@@ -426,9 +498,9 @@ Output: `[Consumer] Starting; waiting for queue messages...`
 npm run cert-checker
 ```
 
-The producer runs on a cron schedule (daily at 00:10 by default), but you can also trigger it manually by calling the exported function.
+The producer runs on a cron schedule (configured in `.env`), but you can also trigger it manually.
 
-#### Option 3: Automated Testing
+#### Option 4: Automated Testing
 
 Run the unit test for the consumer:
 ```bash
@@ -476,19 +548,66 @@ CERT_QUEUE_NAME=cert_notifications
 
 #### Troubleshooting
 
+**Producer enqueuing but consumer not receiving (messages stuck in queue):**
+
+This is the most common issue. Symptoms:
+- Producer logs: `[Producer] Enqueued cert notification for...`
+- Consumer logs: `[Consumer] Starting; waiting for queue messages...` but no notifications appear
+- Queue has messages: `redis-cli LLEN cert_notifications` shows a number > 0
+
+**Solution:**
+1. Verify Redis configuration exists in `.env`:
+   ```bash
+   grep -E "REDIS_HOST|REDIS_PORT|CERT_QUEUE_NAME" .env
+   ```
+   If missing, add:
+   ```env
+   REDIS_HOST=127.0.0.1
+   REDIS_PORT=6379
+   REDIS_PASSWORD=
+   CERT_QUEUE_NAME=cert_notifications
+   ```
+
+2. Restart the consumer after adding Redis config:
+   ```bash
+   # Stop consumer (Ctrl+C)
+   npm run consumer
+   ```
+
+3. The consumer should immediately process all queued messages.
+
 **No messages enqueued:**
-- Check if certifications exist that expire within the configured timeframe
+- Check if certifications exist that expire within the configured timeframe:
+  ```sql
+  SELECT * FROM certifications
+  WHERE expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY);
+  ```
 - Verify database connection
 - Check producer logs for errors
+- Ensure `CERT_EXPIRY_WARNING_DAYS` is set correctly in `.env`
 
-**Consumer not receiving messages:**
-- Verify Redis is running: `redis-cli ping`
+**Consumer not receiving messages (Redis connection issue):**
+- Verify Redis is running: `redis-cli ping` (should return `PONG`)
 - Check queue has messages: `redis-cli LLEN cert_notifications`
-- Verify REDIS_HOST and REDIS_PORT in `.env`
+- Verify `REDIS_HOST` and `REDIS_PORT` in `.env` match your Redis server
+- Check for Redis errors in consumer logs
+
+**Duplicate notifications:**
+- Running the producer multiple times creates duplicate messages in the queue
+- This is expected behavior (producer doesn't check for duplicates)
+- Clear queue before testing: `redis-cli DEL cert_notifications`
+- In production, the cron schedule prevents duplicates
 
 **Messages stuck in queue:**
 - Check consumer is running: `ps aux | grep consumer`
-- Clear queue if needed: `redis-cli DEL cert_notifications`
+- Consumer may have crashed - check logs for errors
+- Restart consumer: `npm run consumer`
+- Last resort - clear queue: `redis-cli DEL cert_notifications`
+
+**TypeError: rows is not iterable:**
+- This error occurred in early versions
+- Fixed by importing `pool` correctly: `const { pool } = require('../config/database')`
+- If you see this, verify [certExpiryProducer.js:2](src/jobs/certExpiryProducer.js#L2) uses destructuring
 
 ---
 

@@ -34,15 +34,16 @@ async function enqueue(msg) {
 /**
  * Blocking pop from the queue. Waits until a message is available.
  * Returns parsed JSON or null on error.
+ * @param {number} timeoutSeconds - Timeout in seconds. 0 = wait indefinitely (default)
  */
 async function blockingPop(timeoutSeconds = 0) {
   await connectRedis();
-  // BRPOP returns [queueName, message] or null
+  // BRPOP returns {key, element} or null
+  // In redis v4+, timeout of 0 means wait indefinitely
   const res = await redisClient.brPop(QUEUE_NAME, timeoutSeconds);
-  if (!res || !Array.isArray(res) || res.length < 2) return null;
-  const [, payload] = res;
+  if (!res || !res.element) return null;
   try {
-    return JSON.parse(payload);
+    return JSON.parse(res.element);
   } catch (err) {
     console.error('Invalid JSON in queue message', err);
     return null;

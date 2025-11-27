@@ -1,5 +1,5 @@
 require('dotenv').config();
-const pool = require('../config/database'); // expects mysql2/promise pool exported
+const { pool } = require('../config/database'); // expects mysql2/promise pool exported
 const { enqueue } = require('../config/queue'); // expects enqueue(msg) exported
 const cron = require('node-cron');
 
@@ -39,13 +39,22 @@ async function findExpiringCerts() {
 }
 
 async function enqueueExpiringCerts() {
+  let rows;
   try {
-    const rows = await findExpiringCerts();
-    if (!rows || rows.length === 0) {
-      console.log(`[Producer] No certifications expiring within ${DAYS_AHEAD} days (${new Date().toISOString()})`);
-      return 0;
-    }
-    let count = 0;
+    rows = await findExpiringCerts();
+    console.log('[Producer] Found rows:', typeof rows, Array.isArray(rows), rows?.length);
+  } catch (err) {
+    console.error('[Producer] Error fetching expiring certs:', err.message);
+    return 0;
+  }
+
+  if (!rows || rows.length === 0) {
+    console.log(`[Producer] No certifications expiring within ${DAYS_AHEAD} days (${new Date().toISOString()})`);
+    return 0;
+  }
+
+  let count = 0;
+  try {
     for (const r of rows) {
       const worker_name = `${r.worker_first_name} ${r.worker_last_name}`.trim();
       const pm_name = `${r.pm_first_name || ''} ${r.pm_last_name || ''}`.trim();
@@ -67,8 +76,8 @@ async function enqueueExpiringCerts() {
     }
     return count;
   } catch (err) {
-    console.error('[Producer] Error enqueueing messages', err);
-    return 0;
+    console.error('[Producer] Error enqueueing messages:', err);
+    return count; // Return how many we did enqueue before failure
   }
 }
 
@@ -77,11 +86,13 @@ async function runOnce() {
   return await enqueueExpiringCerts();
 }
 
-// schedule daily
-cron.schedule(CRON_EXPR, () => {
-  console.log('[Producer] Scheduled run at', new Date().toISOString());
-  enqueueExpiringCerts();
-});
+// schedule daily (only if not in test environment)
+if (process.env.NODE_ENV !== 'test') {
+  cron.schedule(CRON_EXPR, () => {
+    console.log('[Producer] Scheduled run at', new Date().toISOString());
+    enqueueExpiringCerts();
+  });
+}
 
 module.exports = {
   runOnce,
