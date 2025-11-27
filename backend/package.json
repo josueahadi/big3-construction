@@ -24,7 +24,8 @@
     "express",
     "mysql",
     "jwt",
-    "passport"
+    "passport",
+    "redis"
   ],
   "author": "Group 3",
   "license": "ISC",
@@ -43,7 +44,7 @@
     "i18next-fs-backend": "^2.3.1",
     "i18next-http-middleware": "^3.5.0",
     "express-validator": "^7.0.1",
-    "amqplib": "^0.10.3",
+    "redis": "^4.6.12",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1",
     "node-cron": "^3.0.3"

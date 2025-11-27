@@ -1,6 +1,6 @@
 # Big3 Construction Management Dashboard - Backend API
 
-Full-stack backend application for Big3 Construction Company, built with Node.js, Express, MySQL, and RabbitMQ.
+Full-stack backend application for Big3 Construction Company, built with Node.js, Express, MySQL, and Redis.
 
 ## Table of Contents
 - [Features](#features)
@@ -39,9 +39,9 @@ Full-stack backend application for Big3 Construction Company, built with Node.js
 - Accept-Language header support
 
 **Notification System**
-- RabbitMQ message queue
+- Redis-based message queue
 - Automated certification expiry alerts
-- Producer/Consumer pattern
+- Producer/Consumer pattern with blocking pop
 
 **Comprehensive Testing**
 - Unit and integration tests
@@ -56,7 +56,7 @@ Full-stack backend application for Big3 Construction Company, built with Node.js
 - **Runtime:** Node.js 18+
 - **Framework:** Express.js 4.x
 - **Database:** MySQL 8.x
-- **Message Queue:** RabbitMQ 3.x
+- **Message Queue:** Redis 7.x
 
 ### Authentication & Security
 - **passport** - Authentication middleware
@@ -93,7 +93,7 @@ Ensure you have the following installed:
 - **Node.js** >= 18.0.0
 - **npm** >= 9.0.0
 - **MySQL** >= 8.0
-- **RabbitMQ** >= 3.12 (or Docker)
+- **Redis** >= 7.0 (or Docker)
 - **Git**
 
 ### Database Prerequisites
@@ -146,20 +146,19 @@ mysql -u root -p big3_construction < migrations/07_migrations.sql
 mysql -u root -p big3_construction < migrations/08_seed_users.sql
 ```
 
-### 4. Set Up RabbitMQ
+### 4. Set Up Redis
 
 **Option A: Using Docker (Recommended)**
 ```bash
-docker run -d --name rabbitmq \
-  -p 5672:5672 \
-  -p 15672:15672 \
-  rabbitmq:3-management
+docker run -d --name redis \
+  -p 6379:6379 \
+  redis:7-alpine
 ```
 
 **Option B: Install Locally**
-- macOS: `brew install rabbitmq`
-- Ubuntu: `sudo apt-get install rabbitmq-server`
-- Windows: Download from [rabbitmq.com](https://www.rabbitmq.com/download.html)
+- macOS: `brew install redis` then `brew services start redis`
+- Ubuntu: `sudo apt-get install redis-server`
+- Windows: Download from [redis.io](https://redis.io/download) or use WSL
 
 ---
 
@@ -181,8 +180,13 @@ DB_NAME=big3_construction
 # JWT
 JWT_SECRET=your_super_secret_key_change_in_production
 
-# RabbitMQ
-RABBITMQ_URL=amqp://localhost:5672
+# Redis Queue Configuration
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+REDIS_PASSWORD=
+CERT_QUEUE_NAME=cert_notifications
+CERT_EXPIRY_WARNING_DAYS=30
+CERT_CHECK_CRON=10 0 * * *
 ```
 
 ### 3. Verify Configuration
@@ -357,6 +361,123 @@ npm test
 # Open coverage/lcov-report/index.html in browser
 ```
 
+### Testing the Notification System
+
+The certification expiry notification system uses a producer-consumer pattern with Redis. Here's how to test it:
+
+#### Prerequisites
+1. Ensure Redis is running:
+   ```bash
+   redis-cli ping  # Should return: PONG
+   ```
+
+2. Ensure you have test data with certifications:
+   ```sql
+   SELECT cert_id, cert_name, expires_at, DATEDIFF(expires_at, CURDATE()) AS days_left
+   FROM certifications
+   WHERE expires_at BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY);
+   ```
+
+#### Option 1: Manual Testing (Quick Test)
+
+**Step 1: Run producer once to enqueue messages**
+```bash
+cd backend
+node src/jobs/certExpiryProducer.js
+```
+Expected output: `[Producer] Enqueued cert notification for...`
+
+**Step 2: Check Redis queue**
+```bash
+redis-cli LLEN cert_notifications
+# Should show number of messages in queue
+```
+
+**Step 3: Run consumer to process messages**
+```bash
+node src/queue/certExpiryConsumer.js
+```
+Expected output: `NOTIFICATION: Sending email to PM...`
+
+Press `Ctrl+C` to stop the consumer.
+
+#### Option 2: Testing with npm scripts
+
+**Terminal 1 - Start Consumer (runs continuously)**
+```bash
+npm run consumer
+```
+Output: `[Consumer] Starting; waiting for queue messages...`
+
+**Terminal 2 - Run Producer**
+```bash
+npm run cert-checker
+```
+
+The producer runs on a cron schedule (daily at 00:10 by default), but you can also trigger it manually by calling the exported function.
+
+#### Option 3: Automated Testing
+
+Run the unit test for the consumer:
+```bash
+npm test -- notification.consumer.test.js
+```
+
+#### Verifying the Full Flow
+
+1. **Add test certification expiring soon:**
+   ```sql
+   UPDATE certifications
+   SET expires_at = DATE_ADD(CURDATE(), INTERVAL 15 DAY)
+   WHERE cert_id = 1;
+   ```
+
+2. **Run producer:**
+   ```bash
+   node src/jobs/certExpiryProducer.js
+   ```
+
+3. **Check console output** - should see:
+   ```
+   [Producer] Enqueued cert notification for John Doe (Basic Safety) -> PM: pm@example.com
+   ```
+
+4. **Consumer should automatically process** (if running) and log:
+   ```
+   NOTIFICATION: Sending email to PM Jane Smith <pm@example.com> for worker John Doe...
+   ```
+
+#### Configuration Options
+
+Customize notification behavior via `.env`:
+
+```env
+# How many days ahead to check for expiring certs
+CERT_EXPIRY_WARNING_DAYS=30
+
+# Cron schedule (default: daily at 00:10)
+CERT_CHECK_CRON=10 0 * * *
+
+# Redis queue name
+CERT_QUEUE_NAME=cert_notifications
+```
+
+#### Troubleshooting
+
+**No messages enqueued:**
+- Check if certifications exist that expire within the configured timeframe
+- Verify database connection
+- Check producer logs for errors
+
+**Consumer not receiving messages:**
+- Verify Redis is running: `redis-cli ping`
+- Check queue has messages: `redis-cli LLEN cert_notifications`
+- Verify REDIS_HOST and REDIS_PORT in `.env`
+
+**Messages stuck in queue:**
+- Check consumer is running: `ps aux | grep consumer`
+- Clear queue if needed: `redis-cli DEL cert_notifications`
+
 ---
 
 ## Project Structure
@@ -368,7 +489,7 @@ backend/
 │   │   ├── database.js     # MySQL connection pool
 │   │   ├── passport.js     # Passport JWT strategy
 │   │   ├── i18n.js         # i18next setup
-│   │   └── queue.js        # RabbitMQ connection
+│   │   └── queue.js        # Redis queue connection
 │   ├── middleware/         # Express middleware
 │   │   ├── auth.middleware.js
 │   │   ├── rbac.middleware.js
@@ -408,11 +529,12 @@ backend/
 - **Extensibility:** Easy to add OAuth later
 - **Stateless:** Scalable across multiple servers
 
-### Why RabbitMQ over Redis?
-- **Reliability:** Message persistence and acknowledgments
-- **Guaranteed Delivery:** Critical for certification alerts
-- **Enterprise Pattern:** Shows production-ready architecture
-- **Durability:** Messages survive server restarts
+### Why Redis for Queue?
+- **Simplicity:** Lightweight, easy to set up and maintain
+- **Sufficient for Use Case:** Daily cert checks don't require complex routing
+- **Blocking Operations:** BRPOP provides efficient consumer waiting
+- **Performance:** Fast in-memory operations for quick job processing
+- **Wide Adoption:** Used by popular libraries like Sidekiq and Bull
 
 ### Why Repository Pattern?
 - **Separation of Concerns:** Business logic separate from data access
@@ -438,13 +560,17 @@ DB_USER=root
 DB_PASSWORD=your_actual_password
 ```
 
-### Issue: RabbitMQ Connection Failed
+### Issue: Redis Connection Failed
 ```bash
-# Check RabbitMQ is running
-docker ps | grep rabbitmq
+# Check Redis is running
+redis-cli ping
+# Should return: PONG
 
-# Or check service
-sudo systemctl status rabbitmq-server
+# Or check Docker container
+docker ps | grep redis
+
+# Or check service (Linux)
+sudo systemctl status redis-server
 ```
 
 ### Issue: JWT Authentication Failed
