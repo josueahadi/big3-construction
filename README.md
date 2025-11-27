@@ -1,34 +1,28 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/9-Jl7uxY)
-[![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-2972f46106e565e64193e422d61a12cf1da4916b45550586e14ef0a7c637dd04.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=21439892)
-# Big3 Construction: Phase 2 - Optimizing & Automating Operations
+# Big3 Construction Management Dashboard
 
 ## Project Overview
 
-**Scenario:** Big3 Construction was thrilled with the normalized 5NF database your team delivered in the Design Activity. The data is clean, redundant-free, and an order of magnitude more reliable.
+A comprehensive construction project management system built with Node.js, Express, MySQL, and Redis. This application provides RESTful APIs for managing projects, workers, clients, materials, and suppliers with advanced features including:
 
-Now that they've been using it for a few months, they've come back to you with a new set of "Phase 2" requirements. They don't just want to store data; they want to optimize performance, simplify access for different user roles, and automate common business processes.
+- **JWT Authentication** with role-based access control (RBAC)
+- **Geospatial Search** - Find projects near specific coordinates using Haversine distance calculation
+- **Internationalization (i18n)** - English and Spanish language support
+- **Notification System** - Redis-based message queue for certification expiry alerts
+- **Comprehensive Testing** - 80%+ code coverage with Jest
 
-Your team has been retained to implement these advanced features.
+## Tech Stack
 
-**Total Points:** 200 points  
-**Team Size:** 3 members (this is a pair programming assignment) 
+- **Backend:** Node.js 18+, Express.js
+- **Database:** MySQL 8.0
+- **Cache/Queue:** Redis 7.x
+- **Authentication:** Passport.js with JWT
+- **Validation:** express-validator
+- **Testing:** Jest with Supertest
+- **Documentation:** JSDoc, Swagger-ready
 
-## Learning Objectives
+## Database Schema
 
-By completing this project, you will:
-
-- Analyze query performance and create **Indexes** to optimize data retrieval.
-- Write complex, multi-level **Subqueries** and advanced **JOINs** to answer sophisticated business questions.
-- Implement **Views** to simplify data access and enhance security.
-- Create **Stored Procedures** to encapsulate and automate repetitive, multi-step business logic.
-- Enforce complex business rules and maintain data integrity using **Triggers**.
-- Schedule automated, recurring database tasks using **Events**.
-
-## Phase 1 Standard Schema
-
-To ensure all teams are working from a consistent, normalized database, this Phase 2 assignment is based on the following official 5NF schema.
-
-Your Phase 1 implementation (your `01_create_tables.sql` and `02_insert_data.sql` scripts) must match this structure. All modules in this assignment assume your table and column names match this ERD.
+The application uses a normalized 5NF database schema for managing construction projects, workers, materials, and client relationships.
 
 ```mermaid
 erDiagram
@@ -103,18 +97,27 @@ erDiagram
     suppliers ||--o{ project_materials : "supplies"
 ```
 
-## Database Setup
+## Quick Start
 
-**IMPORTANT:** Before working on any modules or running the backend API, you must set up the database by running the migration files in this exact order:
+### Prerequisites
+
+- Node.js 18+ and npm
+- MySQL 8.0+
+- Redis 7.x+
+- Git
+
+### Database Setup
+
+Run the migration files in this exact order:
 
 ```bash
-# 1. Create database and base tables (Phase 1)
+# 1. Create database and base tables
 mysql -u root -p < migrations/01_setup_database.sql
 
 # 2. Insert sample data for Phase 1 tables
 mysql -u root -p big3_construction < migrations/02_insert_data.sql
 
-# 3. Add backend-specific tables and columns (Phase 2+)
+# 3. Add backend-specific tables and columns
 mysql -u root -p big3_construction < migrations/07_migrations.sql
 
 # 4. Seed user accounts for authentication
@@ -127,226 +130,239 @@ mysql -u root -p big3_construction < migrations/08_seed_users.sql
 - **07_migrations.sql** - Adds backend-specific tables (`users`, `user_activity_log`) and columns (latitude/longitude for projects)
 - **08_seed_users.sql** - Creates 5 test user accounts (1 Admin, 2 PMs, 2 Site Supervisors) with bcrypt-hashed passwords
 
-## Backend API Setup
+#### Using MySQL Workbench (Alternative)
+You can also run these migrations via MySQL Workbench:
+- Open Workbench → File → Open SQL Script → select each migration file in order (01 → 02 → 07 → 08)
+- Click the lightning bolt (Execute) for each script
+- For detailed screenshots and verification queries, see [`SETUP_INSTRUCTIONS.md`](SETUP_INSTRUCTIONS.md)
 
-This project includes a Node.js/Express backend API for managing the Big3 Construction database with RESTful endpoints, authentication, geospatial search, and multilingual support.
+### Backend Setup
 
-**Setup Instructions:** See [backend/README.md](backend/README.md) for complete backend installation, configuration, and API documentation.
+1. **Navigate to backend directory:**
+   ```bash
+   cd backend
+   ```
 
-**⚠️ Important:** All backend setup and npm package installations must be done from within the `backend/` directory. Always `cd backend` before running `npm install` or any npm commands.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-## Project Setup & Delivery
+3. **Configure environment:**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your database credentials
+   ```
 
-This assignment builds directly on your "Phase 1" implementation. You will use the `big3_construction` database you built and populated according to the standard schema provided above.
+4. **Start Redis:**
+   ```bash
+   redis-server
+   ```
 
-- **GitHub Classroom:** Accept the "Phase 2" assignment from the link on Canvas. This will create a new repository for your team, pre-populated with a folder structure and this README.md.
-- **Viewing the Schema Diagram:** To view the Mermaid ERD diagram in this README within VS Code:
-  1. Open the Extensions panel (`Ctrl+Shift+X` or `Cmd+Shift+X` on Mac)
-  2. Search for "Markdown Preview Mermaid Support"
-  3. Install the extension by Matt Bierner
-  4. Open this README.md and press `Ctrl+Shift+V` (or `Cmd+Shift+V` on Mac) to open the Markdown preview
-  5. The Entity-Relationship Diagram will now render visually
+5. **Run the API:**
+   ```bash
+   npm start
+   # Server runs on http://localhost:5001
+   ```
 
-  *Note: The diagram also renders automatically when you view this README on GitHub.com*
-- **Tools:** We recommend DataGrip as its database management features are excellent for this task. You can manage your scripts, run queries, and easily inspect your database objects (like views, procedures, and triggers) from the UI. However, you may use any tool you are comfortable with (MySQL Workbench, DBeaver, etc.).
-- **Collaboration:** This is a pair programming assignment. We highly recommend you work on the logic for the "Challenge" sections together, either in person or over a screen share.
+6. **Optional - Run notification consumer:**
+   ```bash
+   npm run consumer
+   ```
 
-## Submission Requirements
+**Full Documentation:** See [backend/README.md](backend/README.md) for complete API documentation, testing instructions, and advanced configuration.
 
-You will submit your work by committing your SQL files to your GitHub Classroom repository. Your repository must contain the following files:
+## Key Features
 
-- `01_indexes.sql`: All SQL for Module 1.
-- `02_subqueries.sql`: All SQL queries for Module 2.
-- `03_views.sql`: All SQL for Module 3.
-- `04_procedures.sql`: All SQL for Module 4.
-- `05_triggers.sql`: All SQL for Module 5.
-- `06_events.sql`: All SQL for Module 6.
-- `README.md`: You must edit this file to add your justifications for the "Challenge" sections and a brief Team Contribution Statement at the end.
+### Authentication & Authorization
+- **JWT-based authentication** with 7-day token expiration
+- **Role-Based Access Control (RBAC)** with three roles:
+  - **Admin** - Full system access
+  - **PM (Project Manager)** - Manage assigned projects
+  - **Site Supervisor** - Read-only access to assigned projects
+- Password hashing with bcrypt (10 rounds)
 
+### Geospatial Features
+- Find projects within a specified radius of coordinates
+- Haversine formula for accurate distance calculation
+- RBAC-filtered results (users only see their assigned projects)
+- Example: `GET /api/projects/nearme?lat=5.6037&lng=-0.1870&radius=50`
 
-## Assignment Modules
+### Internationalization (i18n)
+- Multi-language support via `Accept-Language` header
+- Supported languages: English (en), Spanish (es)
+- All error messages and responses translated
+- Example: `Accept-Language: es` returns errors in Spanish
 
-Follow each module in order. Each one contains a Client Request, a Guided Activity to learn the concept, and a Challenge Task to apply your knowledge.
+### Notification System
+- **Producer/Consumer pattern** with Redis queue
+- Automated certification expiry monitoring
+- Scalable async processing
+- Separate consumer process for handling notifications
 
-### [Module 1: Indexes (The "Need for Speed")](module-1/README.md)
+### Testing
+- **Unit tests** for controllers, services, and utilities
+- **Integration tests** for API endpoints
+- 80%+ code coverage
+- Mock helpers for consistent testing
+- Run tests: `npm test`
 
-### [Module 2: Subqueries & Advanced Joins (The "Complex Questions")](module-2/README.md)
+## Project Structure
 
-### [Module 3: Views (The "Simple & Secure" Reports)](module-3/README.md)
+```
+big3-advanced-sql-formative-1-group-3/
+├── backend/                    # Node.js Express API
+│   ├── src/
+│   │   ├── config/            # Database, Redis, Passport config
+│   │   ├── controllers/       # Request handlers
+│   │   ├── services/          # Business logic
+│   │   ├── repositories/      # Database queries
+│   │   ├── middleware/        # Auth, RBAC, i18n, error handling
+│   │   ├── routes/            # API route definitions
+│   │   ├── jobs/              # Queue producers/consumers
+│   │   ├── locales/           # i18n translations (en, es)
+│   │   └── utils/             # Helper functions (Haversine, etc.)
+│   ├── tests/                 # Unit & integration tests
+│   ├── docs/                  # API documentation
+│   └── package.json
+├── migrations/                 # Database migration scripts
+│   ├── 01_setup_database.sql
+│   ├── 02_insert_data.sql
+│   ├── 07_migrations.sql
+│   └── 08_seed_users.sql
+└── README.md
+```
 
-### [Module 4: Stored Procedures (The "One-Click" Tasks)](module-4/README.md)
+## API Documentation
 
-### [Module 5: Triggers (The "Automatic Rule-Enforcer")](module-5/README.md)
+### Base URL
+```
+http://localhost:5001/api
+```
 
-### [Module 6: Events (The "Scheduled Maintenance")](module-6/README.md)
+### Main Endpoints
 
-## Resources & Support
+**Authentication**
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - User login (returns JWT)
+- `GET /api/auth/me` - Get current user info
 
-### Official Documentation
+**Projects**
+- `GET /api/projects` - List all projects (filtered by role)
+- `GET /api/projects/:id` - Get project details
+- `POST /api/projects` - Create project (Admin only)
+- `PUT /api/projects/:id` - Update project (Admin/PM)
+- `DELETE /api/projects/:id` - Delete project (Admin only)
+- `GET /api/projects/nearme` - Geospatial search
 
-- **MySQL Reference Manual:** [https://dev.mysql.com/doc/refman/8.0/en/](https://dev.mysql.com/doc/refman/8.0/en/)
-  - Indexes: [https://dev.mysql.com/doc/refman/8.0/en/optimization-indexes.html](https://dev.mysql.com/doc/refman/8.0/en/optimization-indexes.html)
-  - Subqueries: [https://dev.mysql.com/doc/refman/8.0/en/subqueries.html](https://dev.mysql.com/doc/refman/8.0/en/subqueries.html)
-  - Views: [https://dev.mysql.com/doc/refman/8.0/en/views.html](https://dev.mysql.com/doc/refman/8.0/en/views.html)
-  - Stored Procedures: [https://dev.mysql.com/doc/refman/8.0/en/stored-routines.html](https://dev.mysql.com/doc/refman/8.0/en/stored-routines.html)
-  - Triggers: [https://dev.mysql.com/doc/refman/8.0/en/triggers.html](https://dev.mysql.com/doc/refman/8.0/en/triggers.html)
-  - Events: [https://dev.mysql.com/doc/refman/8.0/en/events.html](https://dev.mysql.com/doc/refman/8.0/en/events.html)
+**Workers**
+- `GET /api/workers` - List all workers
+- `GET /api/workers/:id` - Get worker details
+- `POST /api/workers` - Create worker (Admin only)
+- `PUT /api/workers/:id` - Update worker (Admin only)
+- `POST /api/workers/:id/certifications` - Add certification
 
-### Getting Help
+**Clients, Materials, Suppliers**
+- Similar CRUD endpoints with RBAC enforcement
 
-- **Office Hours:** Check Canvas for your instructor's availability
-- **Discussion Forum:** Use the Canvas discussion board to ask questions and help your peers
-- **Team Communication:** Establish regular check-ins with your team members
-- **Debugging Tips:**
-  - Use `EXPLAIN` to analyze query performance
-  - Test each database object individually before combining them
-  - Check error logs if stored procedures, triggers, or events fail
-  - Use `SHOW WARNINGS;` to identify issues with your SQL statements
+See [backend/docs/API.md](backend/docs/API.md) for complete API reference with request/response examples.
 
-### Recommended Practices
+## Testing
 
-- Commit your work frequently to GitHub with descriptive commit messages
-- Test all SQL scripts in a development environment before finalizing
-- Document your reasoning for design decisions, especially in challenge sections
-- Review each other's code within your team before submission
-- Keep a log of issues encountered and how you resolved them
+### Run All Tests
+```bash
+cd backend
+npm test
+```
 
-## AI Usage Policy
+### Run with Coverage
+```bash
+npm run test:coverage
+```
 
-### Permitted Uses
+### Test Credentials
+```
+Admin:
+  email: admin@big3construction.com
+  password: password123
 
-This assignment is designed to help you develop practical database administration skills that you will use in your professional career. You may use AI tools (such as GitHub Copilot, ChatGPT, or similar) in the following ways:
+PM (Maria Garcia):
+  email: maria.garcia@big3construction.com
+  password: password123
 
-- **Syntax assistance:** Getting help with SQL syntax, function parameters, or command structure
-- **Debugging support:** Understanding error messages and identifying potential issues in your code
-- **Concept clarification:** Asking for explanations of database concepts covered in the modules
-- **Code review:** Having AI review your code for potential improvements or best practices
-- **Documentation:** Generating comments or documentation for your completed code
+Site Supervisor:
+  email: john.johnson@big3construction.com
+  password: password123
+```
 
-### Required Practices
+See [backend/TEST_CREDENTIALS.md](backend/TEST_CREDENTIALS.md) for complete test account details and Postman examples.
 
-When using AI tools, you must:
+## Development
 
-1. **Understand every line of code:** You are responsible for understanding and being able to explain all code you submit, regardless of its source
-2. **Adapt and customize:** Do not submit AI-generated code without reviewing, testing, and adapting it to the specific requirements of Big3 Construction
-3. **Document AI usage:** In your Team Contribution Statement, acknowledge when AI tools were used and how they assisted your work
-4. **Verify correctness:** AI-generated solutions may contain errors or inefficiencies. Test thoroughly and validate against the assignment requirements
+### Code Style
+- ESLint configured for consistent code style
+- JSDoc comments on all functions
+- Layered architecture: Controllers → Services → Repositories
 
-### Prohibited Uses
+### Environment Variables
+```env
+# Database
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=big3_construction
+DB_PORT=3306
 
-The following uses of AI are not permitted:
+# JWT
+JWT_SECRET=your_secret_key
+JWT_EXPIRES_IN=7d
 
-- Submitting entire modules or solutions generated by AI without understanding or modification
-- Using AI to complete the assignment without genuine engagement with the learning objectives
-- Copying AI-generated code that you cannot explain or defend during discussions
-- Relying solely on AI instead of consulting official documentation and course materials
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
 
-### Academic Integrity
+# Server
+PORT=5001
+NODE_ENV=development
+```
 
-Remember that the goal of this assignment is to develop your skills and understanding. While AI can be a valuable tool, it should enhance your learning, not replace it. You will be expected to discuss and defend your design decisions in team presentations or individual assessments. Work that demonstrates a lack of understanding or engagement with the material may be subject to academic integrity review.
+### Architecture
+- **Controllers** - Handle HTTP requests/responses
+- **Services** - Business logic and validation
+- **Repositories** - Database queries (using Repository Pattern)
+- **Middleware** - Authentication, RBAC, i18n, error handling
+- **Queue System** - Producer/consumer pattern with Redis
 
-If you have questions about appropriate AI usage for specific situations, consult with me before proceeding.
+## Troubleshooting
 
-## Final Deliverable Check
+### Common Issues
 
-- ☐ `01_indexes.sql`
-- ☐ `02_subqueries.sql`
-- ☐ `03_views.sql`
-- ☐ `04_procedures.sql`
-- ☐ `05_triggers.sql`
-- ☐ `06_events.sql`
-- ☐ `README.md` is updated with all challenge justifications and the Team Contribution Statement.
-- ☐ All SQL is well-commented and runnable.
+**Port 5001 already in use:**
+```bash
+lsof -ti :5001 | xargs kill -9
+```
 
+**MySQL connection failed:**
+- Verify MySQL is running: `mysql -u root -p`
+- Check credentials in `.env` file
 
+**Redis connection failed:**
+- Start Redis: `redis-server`
+- Verify connection: `redis-cli ping`
 
-Good luck, consultants!
+**Migration errors:**
+- Run migrations in order (01 → 02 → 07 → 08)
+- Check MySQL version: `mysql --version` (requires 8.0+)
 
+## Contributing
+
+This is an academic project. For contributions or questions, please contact the development team.
+
+## License
+
+--
 ---
 
-## Challenge Justifications
 
-### Module 1 Challenge: Composite Index Design
-
-**Decision:** Created a composite index `idx_projects_city_date` on `projects(site_city, start_date)`.
-
-**Justification:**
-The column order matters significantly in composite indexes due to how MySQL uses indexes from left to right. We chose to place `site_city` first and `start_date` second for the following reasons:
-
-1. **Filter First, Then Sort:** The query pattern `WHERE site_city = 'X' ORDER BY start_date` first filters records by city (reducing the result set), then sorts the remaining records. MySQL can use the index efficiently for both operations when columns are ordered this way.
-
-2. **Selectivity:** The `site_city` column acts as the primary filter, narrowing down the dataset significantly. Once we have all projects in a specific city, the index can efficiently retrieve them in `start_date` order without additional sorting.
-
-3. **Left-Prefix Rule:** MySQL can use this composite index even for queries that only filter by `site_city` (without sorting by date). However, if we reversed the order, queries filtering only by city would not benefit from the index.
-
-This design optimizes the most common query pattern while maintaining flexibility for simpler queries that only filter by city.
-
----
-
-### Module 5 Challenge: Testing the Safety Certification Trigger
-
-**Testing Approach:**
-
-To verify that the `trg_check_safety_cert_before_assignment` trigger correctly enforces the Basic Safety certification requirement, we performed the following tests:
-
-1. **Test Case 1 - Expired Certification (Should Fail):**
-   - Selected a worker with an existing Basic Safety certification
-   - Updated the certification's `expiry_date` to a past date (e.g., `2023-01-01`)
-   - Attempted to insert a new project assignment for that worker
-   - **Expected Result:** INSERT operation rejected with error message: "Error: Worker safety certification is expired or missing."
-   - **Actual Result:** Trigger successfully prevented the insertion and returned the error message
-
-2. **Test Case 2 - Missing Certification (Should Fail):**
-   - Selected a worker with no Basic Safety certification record
-   - Attempted to insert a project assignment for that worker
-   - **Expected Result:** INSERT operation rejected with the same error message
-   - **Actual Result:** Trigger successfully prevented the insertion
-
-3. **Test Case 3 - Valid Certification (Should Succeed):**
-   - Updated the worker's Basic Safety certification to a future date (e.g., `2026-12-31`)
-   - Attempted to insert the project assignment again
-   - **Expected Result:** INSERT operation succeeds
-   - **Actual Result:** Worker was successfully assigned to the project
-
-**Conclusion:** The trigger works as intended, maintaining data integrity by preventing unsafe project assignments while allowing valid ones to proceed.
-
----
-
-### Module 6 Challenge: Testing Strategy for the Archival Event
-
-**Testing Strategy:**
-
-Since the archival event `ev_archive_old_projects` is scheduled to run monthly, waiting for the actual execution would be impractical during development. We employed the following testing strategies:
-
-1. **Manual Execution of Event Logic:**
-   - Temporarily disabled the event: `ALTER EVENT ev_archive_old_projects DISABLE;`
-   - Manually executed the transaction logic (the INSERT and DELETE statements) to verify the archival process works correctly
-   - Verified results by counting records in both `projects` and `archived_projects` tables
-   - Re-enabled the event after testing
-
-2. **Accelerated Schedule Testing:**
-   - Temporarily changed the event schedule to run every 1 minute for immediate testing:
-     ```sql
-     ALTER EVENT ev_archive_old_projects ON SCHEDULE EVERY 1 MINUTE;
-     ```
-   - Monitored the event execution and verified that old projects were correctly archived
-   - Reset the schedule back to monthly after confirming functionality
-
-3. **Test Data Preparation:**
-   - Created test projects with `end_date` values older than 5 years
-   - Ran the event logic to confirm these projects were moved to `archived_projects`
-   - Verified that recent projects (completed within 5 years) were not affected
-
-4. **Event Status Verification:**
-   - Used `SHOW EVENTS;` to confirm the event was created and enabled
-   - Checked MySQL's event scheduler logs for execution history and any errors
-
-**Recommended Production Testing:** Before deploying to production, we would run the event with a test schedule (e.g., `EVERY 1 DAY`) for a monitoring period to ensure no unintended data loss occurs.
-
----
-
-## Team Contribution Statement
-
-***
 
 ---
