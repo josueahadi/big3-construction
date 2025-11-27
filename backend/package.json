@@ -81,9 +81,7 @@
       }
     },
     "testMatch": [
-      "**/tests/**/*.test.js",
-      "!**/tests/integration/i18n.test.js",
-      "!**/tests/integration/geospatial.test.js"
+      "**/tests/**/*.test.js"
     ]
   }
 }
