@@ -8,7 +8,8 @@
     "not_authenticated": "Authentication required",
     "insufficient_permissions": "Insufficient permissions",
     "user_exists": "User already exists",
-    "registration_success": "Registration successful"
+    "registration_success": "Registration successful",
+    "password_changed": "Password changed successfully"
   },
   "crud": {
     "create_success": "Resource created successfully",
@@ -46,7 +47,8 @@
     "certification_updated": "Certification updated successfully",
     "certification_deleted": "Certification deleted successfully",
     "cert_name_required": "Certification name is required",
-    "invalid_expiry_date": "Invalid expiry date format"
+    "invalid_expiry_date": "Invalid expiry date format",
+    "invalid_days": "Days must be between 1 and 365"
   },
   "clients": {
     "not_found": "Client not found",
@@ -95,7 +97,8 @@
     "search_success": "Search completed successfully"
   },
   "common": {
-    "invalid_id": "Invalid ID"
+    "invalid_id": "Invalid ID",
+    "invalid_limit": "Limit must be between 1 and 100"
   },
   "errors": {
     "server_error": "Internal server error",

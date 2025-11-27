@@ -8,7 +8,8 @@
     "not_authenticated": "Se requiere autenticación",
     "insufficient_permissions": "Permisos insuficientes",
     "user_exists": "El usuario ya existe",
-    "registration_success": "Registro exitoso"
+    "registration_success": "Registro exitoso",
+    "password_changed": "Contraseña cambiada exitosamente"
   },
   "crud": {
     "create_success": "Recurso creado exitosamente",
@@ -46,7 +47,8 @@
     "certification_updated": "Certificación actualizada exitosamente",
     "certification_deleted": "Certificación eliminada exitosamente",
     "cert_name_required": "Se requiere el nombre de la certificación",
-    "invalid_expiry_date": "Formato de fecha de vencimiento inválido"
+    "invalid_expiry_date": "Formato de fecha de vencimiento inválido",
+    "invalid_days": "Los días deben estar entre 1 y 365"
   },
   "clients": {
     "not_found": "Cliente no encontrado",
@@ -95,7 +97,8 @@
     "search_success": "Búsqueda completada exitosamente"
   },
   "common": {
-    "invalid_id": "ID inválido"
+    "invalid_id": "ID inválido",
+    "invalid_limit": "El límite debe estar entre 1 y 100"
   },
   "errors": {
     "server_error": "Error interno del servidor",

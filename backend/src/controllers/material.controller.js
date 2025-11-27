@@ -80,7 +80,7 @@ class MaterialController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -148,7 +148,7 @@ class MaterialController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -170,25 +170,25 @@ class MaterialController {
       if (error.message === 'MATERIAL_NAME_REQUIRED') {
         return res.status(400).json({
           success: false,
-          error: 'Material name cannot be empty'
+          error: req.t ? req.t('materials.name_required') : 'Material name cannot be empty'
         });
       }
       if (error.message === 'MATERIAL_NAME_TOO_LONG') {
         return res.status(400).json({
           success: false,
-          error: 'Material name must not exceed 100 characters'
+          error: req.t ? req.t('materials.name_too_long') : 'Material name must not exceed 100 characters'
         });
       }
       if (error.message === 'INVALID_UNIT_COST') {
         return res.status(400).json({
           success: false,
-          error: 'Unit cost must be a positive number'
+          error: req.t ? req.t('materials.invalid_unit_cost') : 'Unit cost must be a positive number'
         });
       }
       if (error.message === 'UNIT_COST_TOO_HIGH') {
         return res.status(400).json({
           success: false,
-          error: 'Unit cost exceeds maximum allowed value'
+          error: req.t ? req.t('materials.unit_cost_too_high') : 'Unit cost exceeds maximum allowed value'
         });
       }
       next(error);
@@ -258,7 +258,7 @@ class MaterialController {
       if (isNaN(limit) || limit < 1 || limit > 100) {
         return res.status(400).json({
           success: false,
-          error: 'Limit must be between 1 and 100'
+          error: req.t ? req.t('common.invalid_limit') : 'Limit must be between 1 and 100'
         });
       }
 
