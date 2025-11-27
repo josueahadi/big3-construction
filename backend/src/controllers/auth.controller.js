@@ -20,7 +20,7 @@ class AuthController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -37,14 +37,14 @@ class AuthController {
 
       res.status(201).json({
         success: true,
-        message: 'User registered successfully',
+        message: req.t ? req.t('auth.registration_success') : 'User registered successfully',
         data: result
       });
     } catch (error) {
       if (error.message === 'USER_EXISTS') {
         return res.status(400).json({
           success: false,
-          error: 'User with this email already exists'
+          error: req.t ? req.t('auth.user_exists') : 'User with this email already exists'
         });
       }
 
@@ -70,7 +70,7 @@ class AuthController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -82,14 +82,14 @@ class AuthController {
 
       res.json({
         success: true,
-        message: 'Login successful',
+        message: req.t ? req.t('auth.login_success') : 'Login successful',
         data: result
       });
     } catch (error) {
       if (error.message === 'INVALID_CREDENTIALS') {
         return res.status(401).json({
           success: false,
-          error: 'Invalid email or password'
+          error: req.t ? req.t('auth.invalid_credentials') : 'Invalid email or password'
         });
       }
 
@@ -108,7 +108,7 @@ class AuthController {
       if (!req.user) {
         return res.status(401).json({
           success: false,
-          error: 'Not authenticated'
+          error: req.t ? req.t('auth.not_authenticated') : 'Not authenticated'
         });
       }
 
@@ -139,7 +139,7 @@ class AuthController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -151,13 +151,13 @@ class AuthController {
 
       res.json({
         success: true,
-        message: 'Password changed successfully'
+        message: req.t ? req.t('auth.password_changed') : 'Password changed successfully'
       });
     } catch (error) {
       if (error.message === 'INVALID_CREDENTIALS') {
         return res.status(401).json({
           success: false,
-          error: 'Current password is incorrect'
+          error: req.t ? req.t('auth.invalid_credentials') : 'Current password is incorrect'
         });
       }
 

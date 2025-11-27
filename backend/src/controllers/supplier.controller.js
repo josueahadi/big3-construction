@@ -78,7 +78,7 @@ class SupplierController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -140,7 +140,7 @@ class SupplierController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -256,7 +256,7 @@ class SupplierController {
       if (isNaN(limit) || limit < 1 || limit > 100) {
         return res.status(400).json({
           success: false,
-          error: 'Limit must be between 1 and 100'
+          error: req.t ? req.t('common.invalid_limit') : 'Limit must be between 1 and 100'
         });
       }
 

@@ -80,7 +80,7 @@ class WorkerController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -142,7 +142,7 @@ class WorkerController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -164,7 +164,7 @@ class WorkerController {
       if (error.message === 'INVALID_SALARY') {
         return res.status(400).json({
           success: false,
-          error: 'Salary must be a positive number'
+          error: req.t ? req.t('workers.invalid_salary') : 'Salary must be a positive number'
         });
       }
       next(error);
@@ -225,7 +225,7 @@ class WorkerController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -281,7 +281,7 @@ class WorkerController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          error: 'Validation failed',
+          error: req.t ? req.t('crud.validation_error') : 'Validation failed',
           details: errors.array()
         });
       }
@@ -297,7 +297,7 @@ class WorkerController {
       if (error.message === 'INVALID_EXPIRY_DATE') {
         return res.status(400).json({
           success: false,
-          error: 'Invalid expiry date format'
+          error: req.t ? req.t('workers.invalid_expiry_date') : 'Invalid expiry date format'
         });
       }
       next(error);
@@ -343,7 +343,7 @@ class WorkerController {
       if (isNaN(days) || days < 1 || days > 365) {
         return res.status(400).json({
           success: false,
-          error: 'Days must be between 1 and 365'
+          error: req.t ? req.t('workers.invalid_days') : 'Days must be between 1 and 365'
         });
       }
 
