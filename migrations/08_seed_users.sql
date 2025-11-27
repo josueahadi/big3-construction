@@ -13,43 +13,42 @@ USE big3_construction;
 -- In production, users should change these immediately
 
 -- Password hash for 'password123' with bcrypt (10 rounds)
--- You can generate this in Node.js with:
--- const bcrypt = require('bcrypt');
--- bcrypt.hash('password123', 10);
+-- Generated with: const bcrypt = require('bcrypt'); bcrypt.hash('password123', 10);
+-- Hash: $2b$10$MHMrg9IFSyiT/KhNblCMsOyGx6W6t9PYhKDdC4vy/Y6b7q8QFZrkK
 
 INSERT INTO users (email, password_hash, role, worker_id, preferred_language)
 VALUES
 -- Admin user (linked to Sarah Williams - worker_id 4)
 ('admin@big3construction.com',
- '$2b$10$rKfQfZc7hL9pY6qZ8X9h4uJ8vN9mT6wU4xK2lP5rQ3sV7yH1nE8tO',
+ '$2b$10$MHMrg9IFSyiT/KhNblCMsOyGx6W6t9PYhKDdC4vy/Y6b7q8QFZrkK',
  'Admin',
  4,
  'en'),
 
 -- Project Manager 1 (linked to Maria Garcia - worker_id 2)
 ('maria.garcia@big3construction.com',
- '$2b$10$rKfQfZc7hL9pY6qZ8X9h4uJ8vN9mT6wU4xK2lP5rQ3sV7yH1nE8tO',
+ '$2b$10$MHMrg9IFSyiT/KhNblCMsOyGx6W6t9PYhKDdC4vy/Y6b7q8QFZrkK',
  'PM',
  2,
  'en'),
 
 -- Project Manager 2 (linked to Lisa Wilson - worker_id 8)
 ('lisa.wilson@big3construction.com',
- '$2b$10$rKfQfZc7hL9pY6qZ8X9h4uJ8vN9mT6wU4xK2lP5rQ3sV7yH1nE8tO',
+ '$2b$10$MHMrg9IFSyiT/KhNblCMsOyGx6W6t9PYhKDdC4vy/Y6b7q8QFZrkK',
  'PM',
  8,
  'es'),
 
 -- Site Supervisor 1 (linked to John Johnson - worker_id 1)
 ('john.johnson@big3construction.com',
- '$2b$10$rKfQfZc7hL9pY6qZ8X9h4uJ8vN9mT6wU4xK2lP5rQ3sV7yH1nE8tO',
+ '$2b$10$MHMrg9IFSyiT/KhNblCMsOyGx6W6t9PYhKDdC4vy/Y6b7q8QFZrkK',
  'Site Supervisor',
  1,
  'en'),
 
 -- Site Supervisor 2 (linked to Michael Brown - worker_id 5)
 ('michael.brown@big3construction.com',
- '$2b$10$rKfQfZc7hL9pY6qZ8X9h4uJ8vN9mT6wU4xK2lP5rQ3sV7yH1nE8tO',
+ '$2b$10$MHMrg9IFSyiT/KhNblCMsOyGx6W6t9PYhKDdC4vy/Y6b7q8QFZrkK',
  'Site Supervisor',
  5,
  'en')
