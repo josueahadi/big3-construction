@@ -39,7 +39,7 @@ async function blockingPop(timeoutSeconds = 0) {
   await connectRedis();
   // BRPOP returns [queueName, message] or null
   const res = await redisClient.brPop(QUEUE_NAME, timeoutSeconds);
-  if (!res) return null;
+  if (!res || !Array.isArray(res) || res.length < 2) return null;
   const [, payload] = res;
   try {
     return JSON.parse(payload);

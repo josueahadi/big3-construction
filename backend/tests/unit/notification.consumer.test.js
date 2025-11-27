@@ -1,4 +1,4 @@
-const { handleMessage } = require('../src/queue/certExpiryConsumer');
+const { handleMessage } = require('../../src/queue/certExpiryConsumer');
 describe('Consumer handleMessage', () => {
   it('logs expected notification text', async () => {
     const spy = jest.spyOn(console, 'log').mockImplementation(() => {});

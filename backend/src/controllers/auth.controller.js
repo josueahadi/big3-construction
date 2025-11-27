@@ -166,4 +166,13 @@ class AuthController {
   }
 }
 
-module.exports = new AuthController();
+const instance = new AuthController();
+
+// Bind methods to preserve context
+instance.register = instance.register.bind(instance);
+instance.login = instance.login.bind(instance);
+instance.getCurrentUser = instance.getCurrentUser.bind(instance);
+instance.changePassword = instance.changePassword.bind(instance);
+
+module.exports = instance;
+module.exports.AuthController = AuthController;
