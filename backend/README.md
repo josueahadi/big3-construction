@@ -223,6 +223,10 @@ The API will be available at: `http://localhost:5001`
 
 ## API Documentation
 
+> **Full API documentation is available at [`docs/API.md`](docs/API.md)**
+
+This section provides a quick overview of the main endpoints. For comprehensive documentation including all endpoints, request/response schemas, and examples, see the complete API reference.
+
 ### Base URL
 ```
 http://localhost:5001/api
