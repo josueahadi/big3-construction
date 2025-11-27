@@ -130,6 +130,12 @@ mysql -u root -p big3_construction < migrations/08_seed_users.sql
 - **07_migrations.sql** - Adds backend-specific tables (`users`, `user_activity_log`) and columns (latitude/longitude for projects)
 - **08_seed_users.sql** - Creates 5 test user accounts (1 Admin, 2 PMs, 2 Site Supervisors) with bcrypt-hashed passwords
 
+#### Using MySQL Workbench (Alternative)
+You can also run these migrations via MySQL Workbench:
+- Open Workbench → File → Open SQL Script → select each migration file in order (01 → 02 → 07 → 08)
+- Click the lightning bolt (Execute) for each script
+- For detailed screenshots and verification queries, see [`SETUP_INSTRUCTIONS.md`](SETUP_INSTRUCTIONS.md)
+
 ### Backend Setup
 
 1. **Navigate to backend directory:**
