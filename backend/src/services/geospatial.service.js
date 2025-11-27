@@ -42,12 +42,18 @@ const geospatialService = {
       // Calculate distance and filter by radius
       const nearbyProjects = projects
         .map(project => {
+          // Convert latitude and longitude from string/DECIMAL to number
+          const projectLat = parseFloat(project.latitude);
+          const projectLng = parseFloat(project.longitude);
+          
           const distance = haversineDistance(
             lat, lng, 
-            project.latitude, project.longitude
+            projectLat, projectLng
           );
           return {
             ...project,
+            latitude: projectLat,
+            longitude: projectLng,
             distance_km: distance
           };
         })
